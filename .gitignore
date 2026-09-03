@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.tmp
+.venv/
+
+# GitHubは閲覧（GitHub Pages公開）専用。docs/ 以外のスクレイパー本体・設定は
+# ローカルのみで管理し、リポジトリには含めない。
+/scrape.py
+/config.json
+/test_parse.py
+/requirements.txt
+/README.md
+/セットアップ手順.md
+/更新.bat

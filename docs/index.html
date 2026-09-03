@@ -1,0 +1,2314 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>データボード</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500;700&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --ground:      #f2f0e8;
+    --surface:     #f8f6f0;
+    --surface-2:   #efece2;
+    --ink:         #1c1a17;
+    --ink-2:       #5c574c;
+    --ink-muted:   #8c8579;
+    --grid:        #e1ddd0;
+    --baseline:    #c7c1b0;
+    --border:      rgba(11,11,11,0.10);
+    --accent:      #a6791f;
+    --accent-ink:  #6e5115;
+    --accent-wash: rgba(166,121,31,0.12);
+    --pos:         #2a78d6;
+    --pos-wash:    rgba(42,120,214,0.14);
+    --neg:         #e34948;
+    --neg-wash:    rgba(227,73,72,0.12);
+    --shadow: 0 1px 2px rgba(28,26,23,0.04), 0 8px 24px -12px rgba(28,26,23,0.18);
+    --m1: #2a78d6; --m2: #eb6834; --m3: #1baf7a; --m4: #eda100;
+    --m5: #e87ba4; --m6: #008300; --m7: #4a3aa7; --m8: #e34948;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground:      #100f0d;
+      --surface:     #1a1815;
+      --surface-2:   #221f1a;
+      --ink:         #f4f1ea;
+      --ink-2:       #c3bcab;
+      --ink-muted:   #8c8579;
+      --grid:        #2c2822;
+      --baseline:    #3a352c;
+      --border:      rgba(255,255,255,0.10);
+      --accent:      #d9a545;
+      --accent-ink:  #f0c977;
+      --accent-wash: rgba(217,165,69,0.16);
+      --pos:         #3987e5;
+      --pos-wash:    rgba(57,135,229,0.18);
+      --neg:         #e66767;
+      --neg-wash:    rgba(230,103,103,0.16);
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 28px -14px rgba(0,0,0,0.6);
+      --m1: #3987e5; --m2: #d95926; --m3: #199e70; --m4: #c98500;
+      --m5: #d55181; --m6: #008300; --m7: #9085e9; --m8: #e66767;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ground:      #100f0d;
+    --surface:     #1a1815;
+    --surface-2:   #221f1a;
+    --ink:         #f4f1ea;
+    --ink-2:       #c3bcab;
+    --ink-muted:   #8c8579;
+    --grid:        #2c2822;
+    --baseline:    #3a352c;
+    --border:      rgba(255,255,255,0.10);
+    --accent:      #d9a545;
+    --accent-ink:  #f0c977;
+    --accent-wash: rgba(217,165,69,0.16);
+    --pos:         #3987e5;
+    --pos-wash:    rgba(57,135,229,0.18);
+    --neg:         #e66767;
+    --neg-wash:    rgba(230,103,103,0.16);
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 12px 28px -14px rgba(0,0,0,0.6);
+    --m1: #3987e5; --m2: #d95926; --m3: #199e70; --m4: #c98500;
+    --m5: #d55181; --m6: #008300; --m7: #9085e9; --m8: #e66767;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Noto Sans JP", "Zen Kaku Gothic New", system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 20px 64px; }
+
+  header.top {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+  }
+  header.top .inner {
+    max-width: 1180px; margin: 0 auto; padding: 14px 20px;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand .mark {
+    font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 900;
+    font-size: 15px; letter-spacing: .02em; color: var(--accent-ink);
+    background: var(--accent-wash); padding: 3px 8px; border-radius: 4px;
+  }
+  .brand h1 {
+    font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 700;
+    font-size: 18px; margin: 0; letter-spacing: .01em;
+  }
+  nav.jump { display: flex; gap: 18px; font-size: 13px; }
+  nav.jump a { color: var(--ink-2); text-decoration: none; border-bottom: 1px solid transparent; padding-bottom: 2px; }
+  nav.jump a:hover { color: var(--ink); border-color: var(--ink-2); }
+  nav.jump a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  /* 項目が増えるとスマホで何行にも折り返して縦に伸びるので、
+     狭い画面では折り返さず横スクロールする1行にする。 */
+  @media (max-width: 760px) {
+    nav.jump {
+      flex-wrap: nowrap; overflow-x: auto; gap: 14px;
+      padding-bottom: 4px; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    nav.jump::-webkit-scrollbar { display: none; }
+    nav.jump a { white-space: nowrap; }
+  }
+
+  .hero-meta {
+    padding: 28px 0 8px; display: flex; justify-content: space-between; align-items: flex-end;
+    flex-wrap: wrap; gap: 10px; border-bottom: 1px solid var(--border); margin-bottom: 28px;
+  }
+  .hero-meta h2 {
+    font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 900;
+    font-size: clamp(22px, 3vw, 30px); margin: 0 0 4px; text-wrap: balance;
+  }
+  .hero-meta .sub { color: var(--ink-2); font-size: 13.5px; }
+  .hero-meta .sub a { color: var(--accent-ink); }
+  .hero-meta .updated {
+    font-family: "Roboto Mono", monospace; font-size: 12px; color: var(--ink-muted);
+    text-align: right;
+  }
+  .store-picker { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  /* class の display 指定が hidden 属性より強いので、明示的に打ち消す */
+  .store-picker[hidden] { display: none; }
+  .store-picker label {
+    font-size: 12px; color: var(--ink-muted); letter-spacing: .04em;
+  }
+  .store-picker select { min-width: 200px; }
+
+  /* --- Global period-range filter --- */
+  .range-filter-bar {
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    padding: 14px 0; margin: 8px 0 0; border-bottom: 1px solid var(--border);
+  }
+  .range-custom-fields label {
+    display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-muted);
+    font-family: "Roboto Mono", monospace;
+  }
+  .range-filter-bar input[type="date"] {
+    font: inherit; font-family: "Roboto Mono", monospace; font-size: 12.5px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 8px; color: var(--ink);
+  }
+  .range-filter-bar input[type="date"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .range-filter-note { font-size: 11.5px; color: var(--ink-muted); font-family: "Roboto Mono", monospace; margin-left: auto; }
+
+  section { margin: 44px 0; }
+  section > h3 {
+    font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 700; font-size: 15px;
+    margin: 0 0 4px; display: flex; align-items: center; gap: 8px;
+  }
+  section > h3 .num { color: var(--ink-muted); font-family: "Roboto Mono", monospace; font-weight: 400; font-size: 12px; }
+  section > p.desc { color: var(--ink-2); font-size: 13px; margin: 0 0 16px; max-width: 62ch; }
+
+  /* --- KPI tiles --- */
+  .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 16px 14px; box-shadow: var(--shadow);
+  }
+  .kpi .label { font-size: 12px; color: var(--ink-2); margin-bottom: 8px; }
+  .kpi .value {
+    font-family: "Zen Kaku Gothic New", sans-serif; font-weight: 900;
+    font-size: 26px; line-height: 1; margin-bottom: 6px;
+  }
+  .kpi .value.pos { color: var(--pos); }
+  .kpi .value.neg { color: var(--neg); }
+  .kpi .delta { font-family: "Roboto Mono", monospace; font-size: 11.5px; color: var(--ink-muted); }
+
+  /* --- Trend chart --- */
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 18px 8px; box-shadow: var(--shadow);
+  }
+  .chart-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+  .segmented { display: inline-flex; background: var(--surface-2); border-radius: 8px; padding: 3px; gap: 2px; }
+  .segmented button {
+    font: inherit; font-family: "Noto Sans JP", sans-serif; font-size: 12.5px;
+    border: none; background: transparent; color: var(--ink-2); padding: 6px 12px;
+    border-radius: 6px; cursor: pointer;
+  }
+  .segmented button.active { background: var(--surface); color: var(--ink); font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+  .segmented button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chart-legend { font-size: 12px; color: var(--ink-muted); display: flex; gap: 14px; align-items: center; }
+  .chart-legend .key { display: inline-flex; align-items: center; gap: 5px; }
+  .chart-legend .swatch { width: 14px; height: 2px; border-radius: 1px; display: inline-block; }
+
+  svg.trend { width: 100%; height: 300px; display: block; overflow: visible; }
+  svg.bar-chart { width: 100%; height: 220px; display: block; overflow: visible; }
+  svg.overlay-chart { width: 100%; height: 320px; display: block; overflow: visible; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .chip {
+    font: inherit; font-family: "Roboto Mono", monospace; font-size: 11.5px;
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-muted);
+    padding: 4px 10px 4px 8px; border-radius: 999px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; opacity: .55;
+  }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .chip.on { opacity: 1; color: var(--ink); border-color: var(--border); background: var(--surface); box-shadow: 0 1px 2px rgba(0,0,0,0.08); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .rate-note { font-size: 11px; color: var(--ink-muted); margin-top: 8px; }
+  .tt {
+    position: absolute; pointer-events: none; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;
+    font-size: 12px; box-shadow: var(--shadow); transform: translate(-50%, -110%);
+    white-space: nowrap; z-index: 10; opacity: 0; transition: opacity .08s;
+  }
+  .tt .tt-date { color: var(--ink-muted); font-family: "Roboto Mono", monospace; font-size: 11px; margin-bottom: 3px; }
+  .tt .tt-val { font-family: "Roboto Mono", monospace; font-weight: 700; font-size: 14px; }
+  .chart-wrap { position: relative; }
+
+  /* --- Data table --- */
+  .table-toolbar {
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 14px 20px;
+    margin-bottom: 12px; flex-wrap: wrap;
+  }
+  .filter-group { display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label {
+    font-size: 11px; color: var(--ink-muted); font-family: "Roboto Mono", monospace;
+  }
+  .search-box { position: relative; }
+  .search-box input {
+    font: inherit; font-family: "Noto Sans JP", sans-serif; font-size: 13px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 12px 8px 32px; width: 240px; color: var(--ink);
+  }
+  .search-box input::placeholder { color: var(--ink-muted); }
+  .search-box input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .search-box svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: .55; }
+  .result-count { font-size: 12px; color: var(--ink-muted); font-family: "Roboto Mono", monospace; }
+
+  select.kishu-select {
+    font: inherit; font-family: "Noto Sans JP", sans-serif; font-size: 13px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 10px; color: var(--ink); width: 220px; max-width: 40vw;
+  }
+  select.kishu-select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+  .range-inputs { display: flex; align-items: center; gap: 6px; }
+  .range-inputs input {
+    font: inherit; font-family: "Roboto Mono", monospace; font-size: 13px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 8px; width: 82px; color: var(--ink); text-align: right;
+  }
+  .range-inputs input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .range-inputs span { color: var(--ink-muted); font-size: 12px; }
+
+  .clear-filters {
+    font: inherit; font-family: "Noto Sans JP", sans-serif; font-size: 12px;
+    color: var(--accent-ink); background: none; border: none; cursor: pointer;
+    padding: 8px 2px; text-decoration: underline; text-underline-offset: 2px;
+  }
+  .clear-filters:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .table-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .table-scroll { overflow: auto; max-height: 640px; }
+  table.data { border-collapse: collapse; width: 100%; font-size: 13px; }
+  table.data thead th {
+    position: sticky; top: 0; z-index: 2;
+    background: var(--surface-2); text-align: right; font-weight: 700;
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+    font-size: 12px; color: var(--ink-2); cursor: pointer; user-select: none;
+    white-space: nowrap;
+  }
+  table.data thead th:first-child, table.data thead th:nth-child(2) { text-align: left; }
+  table.data thead th:hover { color: var(--ink); }
+  table.data thead th .arrow { font-size: 10px; margin-left: 3px; opacity: .6; }
+  table.data thead th:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+  table.data tbody td {
+    padding: 7px 14px; border-bottom: 1px solid var(--grid);
+    font-family: "Roboto Mono", monospace; font-variant-numeric: tabular-nums;
+    text-align: right; white-space: nowrap;
+  }
+  table.data tbody td:first-child, table.data tbody td:nth-child(2) {
+    font-family: "Noto Sans JP", sans-serif; text-align: left;
+  }
+  table.data tbody td:nth-child(2) { color: var(--ink-2); }
+  /* 機種別サマリーは横に長く、スマホでは機種名が流れて見えなくなるので
+     1列目を左に固定する。台番号別 勝率も同様に台番号を固定する。 */
+  #kishu-table thead th:first-child,
+  #kishu-table tbody td:first-child,
+  #winrate-table thead th:first-child,
+  #winrate-table tbody td:first-child {
+    position: sticky; left: 0; z-index: 1;
+    background: var(--surface);
+    box-shadow: 1px 0 0 var(--grid);
+  }
+  #kishu-table thead th:first-child,
+  #winrate-table thead th:first-child { z-index: 3; background: var(--surface-2); }
+  #kishu-table tbody td:first-child {
+    max-width: 190px; overflow: hidden; text-overflow: ellipsis;
+  }
+  @media (max-width: 760px) {
+    #kishu-table tbody td:first-child { max-width: 130px; }
+  }
+  table.data tbody tr:hover td { background: var(--surface-2); }
+  table.data tbody td.pos { color: var(--pos); font-weight: 700; }
+  table.data tbody td.neg { color: var(--neg); font-weight: 700; }
+  table.data tbody td.zero { color: var(--ink-muted); }
+
+  /* --- Unit x date matrix --- */
+  .matrix-toolbar {
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 14px 20px;
+    margin-bottom: 12px; flex-wrap: wrap;
+  }
+  /* マトリクス／勝率で共有する期間指定バー */
+  .sub-range-bar {
+    display: flex; align-items: flex-end; gap: 12px 18px; flex-wrap: wrap;
+    padding: 12px 14px; margin-bottom: 14px;
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+  }
+  .sub-range-bar input[type="date"] {
+    font: inherit; font-size: 13px; padding: 7px 9px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--surface); color: var(--ink);
+  }
+  .sub-range-note {
+    font-size: 12px; color: var(--ink-muted); font-family: "Roboto Mono", monospace;
+    margin-left: auto; align-self: center;
+  }
+  .mini-btn {
+    font: inherit; font-size: 12px; padding: 7px 12px; cursor: pointer;
+    background: var(--surface); color: var(--accent-ink);
+    border: 1px solid var(--border); border-radius: 8px;
+  }
+  .mini-btn:hover { border-color: var(--accent); }
+  /* 勝率バー（セル内の帯グラフ） */
+  .rate-cell { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+  .rate-bar {
+    flex: 0 0 54px; height: 6px; border-radius: 3px;
+    background: var(--neg-wash); overflow: hidden;
+  }
+  .rate-bar span { display: block; height: 100%; background: var(--pos); border-radius: 3px; }
+  .thin { color: var(--ink-muted); }
+  .matrix-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .matrix-scroll { overflow: auto; max-height: 640px; }
+  table.matrix {
+    border-collapse: separate; border-spacing: 0; font-size: 12.5px;
+    font-family: "Roboto Mono", monospace; font-variant-numeric: tabular-nums;
+  }
+  table.matrix th, table.matrix td {
+    padding: 6px 11px; text-align: right; white-space: nowrap;
+    border-bottom: 1px solid var(--grid); border-right: 1px solid var(--grid);
+  }
+  table.matrix thead th {
+    position: sticky; top: 0; z-index: 2;
+    background: var(--surface-2); font-weight: 700; font-size: 11.5px;
+    color: var(--ink-2); font-family: "Roboto Mono", monospace;
+  }
+  table.matrix thead th:first-child {
+    left: 0; z-index: 4; text-align: left; background: var(--surface-2);
+    font-family: "Noto Sans JP", sans-serif;
+  }
+  table.matrix thead th.total-col { color: var(--ink); background: var(--surface-2); }
+  table.matrix tbody td:first-child {
+    position: sticky; left: 0; z-index: 1; background: var(--surface);
+    text-align: left; font-weight: 600; color: var(--ink);
+    font-family: "Roboto Mono", monospace;
+  }
+  table.matrix tbody tr:hover td { filter: brightness(0.97); }
+  :root:not([data-theme="light"]) table.matrix tbody tr:hover td { filter: brightness(1.12); }
+  :root[data-theme="dark"] table.matrix tbody tr:hover td { filter: brightness(1.12); }
+  table.matrix tbody td.cell-empty { color: var(--ink-muted); background: var(--surface); }
+  table.matrix tbody td.total-col, table.matrix tfoot td {
+    font-weight: 700; color: var(--ink);
+  }
+  table.matrix tfoot td:first-child {
+    position: sticky; left: 0; z-index: 1; text-align: left;
+    font-family: "Noto Sans JP", sans-serif;
+  }
+  table.matrix tfoot tr.foot-sum td { background: var(--surface-2); }
+  table.matrix tfoot tr.foot-plus td { background: var(--surface-2); color: var(--ink-2); font-weight: 500; }
+  table.matrix tfoot tr.foot-plus td:first-child { color: var(--ink); font-weight: 700; }
+  .matrix-legend {
+    display: flex; align-items: center; gap: 10px; font-size: 11px; color: var(--ink-muted);
+    margin-top: 10px; font-family: "Roboto Mono", monospace;
+  }
+  .matrix-legend .ramp {
+    display: inline-block; width: 140px; height: 10px; border-radius: 5px;
+    background: linear-gradient(to right, var(--neg), var(--surface-2), var(--pos));
+  }
+
+  footer {
+    margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--border);
+    font-size: 12px; color: var(--ink-muted); line-height: 1.7;
+    overflow-wrap: anywhere; word-break: break-all;
+  }
+  footer a { color: var(--accent-ink); }
+
+  @media (max-width: 760px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .search-box input { width: 180px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header class="top">
+    <div class="inner">
+      <div class="brand">
+        <span class="mark">DB</span>
+        <h1>データボード</h1>
+      </div>
+      <nav class="jump">
+        <a href="#trend">推移</a>
+        <a href="#patterns">曜日・日付の傾向</a>
+        <a href="#overlay">月またぎ比較</a>
+        <a href="#matrix">台番号×日付マトリクス</a>
+        <a href="#winrate">台番号別 勝率</a>
+        <a href="#kishu">機種別サマリー</a>
+        <a href="#table">全台データ</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="hero-meta">
+    <div>
+      <div class="store-picker" id="store-picker" hidden>
+        <label for="store-select">店舗</label>
+        <select id="store-select" class="kishu-select"></select>
+      </div>
+      <h2 id="store-name">-</h2>
+      <div class="sub" id="hero-sub">-</div>
+    </div>
+    <div class="updated" id="hero-updated">-</div>
+  </div>
+
+  <section class="range-filter-bar" aria-label="集計期間の選択">
+    <div class="segmented" id="range-preset" role="tablist" aria-label="期間プリセット">
+      <button data-days="7" role="tab" aria-selected="false">直近7日</button>
+      <button data-days="30" role="tab" aria-selected="false">直近30日</button>
+      <button data-days="90" role="tab" aria-selected="false">直近90日</button>
+      <button data-days="all" role="tab" class="active" aria-selected="true">全期間</button>
+    </div>
+    <div class="range-custom-fields">
+      <label>期間指定 <input type="date" id="range-from"> 〜 <input type="date" id="range-to"></label>
+    </div>
+    <div class="range-filter-note" id="range-filter-note">-</div>
+  </section>
+  <p class="desc" style="margin:8px 0 0;">この期間指定は「推移」「曜日・日付の傾向」「月またぎ比較」の表示範囲に適用されます。「台番号×日付マトリクス」と「台番号別 勝率」は、それぞれのセクションにある専用の期間指定を使います（直近の実績と全台データは期間指定の対象外）。</p>
+
+  <section id="kpis">
+    <h3>直近の実績 <span class="num" id="kpi-date">-</span></h3>
+    <div class="kpi-row" id="kpi-row"></div>
+  </section>
+
+  <section id="trend">
+    <h3>差枚・G数の推移 <span class="num" id="trend-range">-</span></h3>
+    <p class="desc">店舗全体の日別実績。0を基準に、お客様側がプラスだった日（青）とお客様側がマイナス＝店側がプラスだった日（赤）で塗り分けています。</p>
+    <div class="chart-card">
+      <div class="chart-toolbar">
+        <div class="segmented" id="metric-toggle" role="tablist" aria-label="表示する指標">
+          <button data-metric="a" class="active" role="tab" aria-selected="true">平均差枚</button>
+          <button data-metric="t" role="tab" aria-selected="false">総差枚</button>
+          <button data-metric="g" role="tab" aria-selected="false">平均G数</button>
+        </div>
+        <div class="chart-legend" id="chart-legend"></div>
+      </div>
+      <div class="chart-wrap">
+        <svg class="trend" id="trend-svg" viewBox="0 0 1000 300" preserveAspectRatio="none"></svg>
+        <div class="tt" id="tooltip"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="patterns">
+    <h3>曜日・日付ごとの傾向 <span class="num" id="patterns-range">-</span></h3>
+    <p class="desc" id="patterns-desc">曜日別・暦日（1〜31日）別の平均差枚。旧イベント日とされる7のつく日・1日・11日・21日・30日の傾向を見るのにも使えます。母数が少ない日は参考程度にご覧ください。</p>
+    <div class="chart-toolbar" style="margin-bottom:14px;">
+      <div class="segmented" id="patterns-metric-toggle" role="tablist" aria-label="表示する指標">
+        <button data-metric="a" class="active" role="tab" aria-selected="true">平均差枚（1台あたり）</button>
+        <button data-metric="t" role="tab" aria-selected="false">総差枚（店舗全体）</button>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="chart-toolbar"><strong style="font-size:12.5px;">曜日別</strong></div>
+        <svg class="bar-chart" id="weekday-svg" viewBox="0 0 500 220" preserveAspectRatio="none"></svg>
+      </div>
+      <div class="chart-card">
+        <div class="chart-toolbar"><strong style="font-size:12.5px;">暦日別（1〜31日）</strong></div>
+        <svg class="bar-chart" id="dom-svg" viewBox="0 0 500 220" preserveAspectRatio="none"></svg>
+      </div>
+    </div>
+    <p class="rate-note" id="patterns-note">-</p>
+  </section>
+
+  <section id="overlay">
+    <h3>月またぎ比較（同じ日付の差枚） <span class="num" id="overlay-range">-</span></h3>
+    <p class="desc">横軸を「その月の何日目か」に揃え、月ごとの折れ線を重ねて表示しています。チップをクリックすると月の表示・非表示を切り替えられます。</p>
+    <div class="chart-card">
+      <div class="chart-toolbar">
+        <div class="segmented" id="overlay-metric-toggle" role="tablist" aria-label="表示する指標">
+          <button data-metric="a" class="active" role="tab" aria-selected="true">平均差枚</button>
+          <button data-metric="t" role="tab" aria-selected="false">総差枚</button>
+        </div>
+      </div>
+      <div class="chip-row" id="month-chips"></div>
+      <div class="chart-wrap">
+        <svg class="overlay-chart" id="overlay-svg" viewBox="0 0 1000 320" preserveAspectRatio="none"></svg>
+        <div class="tt" id="overlay-tooltip"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="matrix">
+    <h3>台番号×日付 差枚マトリクス <span class="num" id="matrix-range">-</span></h3>
+    <p class="desc">機種を選ぶと、その機種に属する台番号ごとに日別の差枚を一覧表示します。セルの色が濃いほど差枚の絶対値が大きいことを示します（青＝お客様側プラス／赤＝店側プラス、他のグラフと同じ配色）。台番号は集計期間中に一度でもその機種として記録された台のみを列に表示しており、日によって設置機種が変わっている場合はデータが無い日が「—」になります。</p>
+    <div class="sub-range-bar" id="matrix-range-bar">
+      <div class="field">
+        <label for="matrix-days">集計日数</label>
+        <select id="matrix-days" class="kishu-select" style="width:140px;">
+          <option value="7">直近7日</option>
+          <option value="14">直近14日</option>
+          <option value="30">直近30日</option>
+          <option value="60">直近60日</option>
+          <option value="90">直近90日</option>
+          <option value="all" selected>全期間</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="matrix-from">集計開始日</label>
+        <input type="date" id="matrix-from">
+      </div>
+      <div class="field">
+        <label for="matrix-to">集計終了日</label>
+        <input type="date" id="matrix-to">
+      </div>
+      <button type="button" class="mini-btn" id="matrix-range-reset">全期間に戻す</button>
+      <div class="sub-range-note" id="matrix-range-note">-</div>
+    </div>
+    <div class="matrix-toolbar">
+      <div class="field">
+        <label for="matrix-kishu">機種を選択</label>
+        <select id="matrix-kishu" class="kishu-select" style="width:280px;"></select>
+      </div>
+      <div class="result-count" id="matrix-count">-</div>
+    </div>
+    <div class="matrix-card">
+      <div class="matrix-scroll">
+        <table class="matrix" id="matrix-table">
+          <thead><tr id="matrix-head-row"></tr></thead>
+          <tbody id="matrix-body"></tbody>
+          <tfoot>
+            <tr class="foot-sum" id="matrix-foot-sum"></tr>
+            <tr class="foot-plus" id="matrix-foot-plus"></tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+    <div class="matrix-legend">
+      <span>マイナス（店側プラス）</span><span class="ramp"></span><span>プラス（お客様側プラス）</span>
+    </div>
+  </section>
+
+  <section id="winrate">
+    <h3>台番号別 勝率 <span class="num" id="winrate-range">-</span></h3>
+    <p class="desc">上の「台番号×日付マトリクス」で指定した集計期間の中で、選んだ機種の台番号ごとに「差枚がプラスだった日」の割合を集計します。差枚0の日は勝ちに含めません。稼働日数が少ない台は偶然の影響が大きいので、母数と合わせてご覧ください。列見出しをクリックすると並べ替えられます。</p>
+    <div class="matrix-toolbar">
+      <div class="field">
+        <label for="winrate-kishu">機種を選択</label>
+        <select id="winrate-kishu" class="kishu-select" style="width:280px;"></select>
+      </div>
+      <div class="result-count" id="winrate-count">-</div>
+    </div>
+    <div class="table-card">
+      <div class="table-scroll">
+        <table class="data" id="winrate-table">
+          <thead>
+            <tr>
+              <th data-wkey="d" tabindex="0">台番号<span class="arrow"></span></th>
+              <th data-wkey="days" tabindex="0">稼働日数<span class="arrow"></span></th>
+              <th data-wkey="wins" tabindex="0">勝ち日数<span class="arrow"></span></th>
+              <th data-wkey="rate" tabindex="0">勝率<span class="arrow"></span></th>
+              <th data-wkey="total" tabindex="0">累計差枚<span class="arrow"></span></th>
+              <th data-wkey="avg" tabindex="0">平均差枚<span class="arrow"></span></th>
+            </tr>
+          </thead>
+          <tbody id="winrate-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="kishu">
+    <h3>機種別サマリー <span class="num" id="kishu-range">-</span></h3>
+    <p class="desc">「台番号×日付マトリクス」で指定した集計期間について、機種ごとの平均G数と勝率を一覧にします。勝率は「その機種のどれかの台が、ある日に差枚プラスだった」割合を、延べ台日（台数×稼働日数）を母数として計算しています。差枚0の日は勝ちに含めません。延べ台日が少ない機種は偶然の影響が大きいので、母数と合わせてご覧ください。列見出しをクリックすると並べ替えられます。</p>
+    <div class="matrix-toolbar">
+      <div class="result-count" id="kishu-count">-</div>
+    </div>
+    <div class="table-card">
+      <div class="table-scroll">
+        <table class="data" id="kishu-table">
+          <thead>
+            <tr>
+              <th data-kkey="k" tabindex="0">機種<span class="arrow"></span></th>
+              <th data-kkey="rate" tabindex="0">勝率<span class="arrow"></span></th>
+              <th data-kkey="g" tabindex="0">平均G数<span class="arrow"></span></th>
+              <th data-kkey="avg" tabindex="0">平均差枚<span class="arrow"></span></th>
+              <th data-kkey="units" tabindex="0">台数<span class="arrow"></span></th>
+              <th data-kkey="unitDays" tabindex="0">延べ台日<span class="arrow"></span></th>
+              <th data-kkey="total" tabindex="0">累計差枚<span class="arrow"></span></th>
+            </tr>
+          </thead>
+          <tbody id="kishu-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="table">
+    <h3>全台データ <span class="num" id="table-date">-</span></h3>
+    <p class="desc">対象日の全台の台番号・機種・差枚・G数・出率。列見出しをクリックすると並び替え、検索欄・フィルターで絞り込めます。</p>
+    <div class="table-toolbar">
+      <div class="filter-group">
+        <div class="field">
+          <label for="table-day-select">対象日</label>
+          <select id="table-day-select" class="kishu-select" style="width:170px;"></select>
+        </div>
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+          <input type="text" id="search" placeholder="機種名・台番号で検索" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="kishu-filter">機種で絞り込み</label>
+          <select id="kishu-filter" class="kishu-select"></select>
+        </div>
+        <div class="field">
+          <label>台番号の範囲</label>
+          <div class="range-inputs">
+            <input type="number" id="daiban-min" placeholder="From" inputmode="numeric">
+            <span>〜</span>
+            <input type="number" id="daiban-max" placeholder="To" inputmode="numeric">
+          </div>
+        </div>
+        <button type="button" class="clear-filters" id="clear-filters">条件をクリア</button>
+      </div>
+      <div class="result-count" id="result-count">-</div>
+    </div>
+    <div class="table-card">
+      <div class="table-scroll">
+        <table class="data" id="data-table">
+          <thead>
+            <tr>
+              <th data-key="d" tabindex="0">台番号<span class="arrow"></span></th>
+              <th data-key="k" tabindex="0">機種<span class="arrow"></span></th>
+              <th data-key="s" tabindex="0">差枚<span class="arrow"></span></th>
+              <th data-key="g" tabindex="0">G数<span class="arrow"></span></th>
+              <th data-key="p" tabindex="0">出率<span class="arrow"></span></th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div id="footer-source">-</div>
+    <div>当データは第三者サイトによる独自調査値であり、実際の数値と異なる場合があります。個人の参考用途としてご利用ください。</div>
+  </footer>
+</div>
+
+<script>
+window.__BOOT__ = function () {
+  "use strict";
+  var ROOT = window.__PACHINKO_DATA__;
+
+  function fatal(title, body) {
+    document.body.innerHTML =
+      '<div style="max-width:640px;margin:80px auto;padding:0 24px;' +
+      'font-family:system-ui,sans-serif;line-height:1.9;color:#3a3733">' +
+      '<h1 style="font-size:20px">' + title + '</h1><p>' + body + '</p></div>';
+  }
+
+  if (!ROOT || !ROOT.stores) {
+    fatal("\u30c7\u30fc\u30bf\u3092\u8aad\u307f\u8fbc\u3081\u307e\u305b\u3093\u3067\u3057\u305f",
+      "\u30d5\u30a1\u30a4\u30eb\u304c\u6700\u5f8c\u307e\u3067\u30c0\u30a6\u30f3\u30ed\u30fc\u30c9\u3055\u308c\u3066\u3044\u306a\u3044\u53ef\u80fd\u6027\u304c\u3042\u308a\u307e\u3059\u3002" +
+      "\u3082\u3046\u4e00\u5ea6\u4fdd\u5b58\u3057\u76f4\u3057\u3066\u304b\u3089\u958b\u3044\u3066\u307f\u3066\u304f\u3060\u3055\u3044\u3002");
+    return;
+  }
+
+  // The build step interns machine names into ROOT.kishuNames and stores an index
+  // in each row's `k`. Expand it back so the rest of the code sees plain names.
+  // 機種名の辞書は全店舗で共有しているので、全店舗分をまとめて展開する。
+  if (ROOT.kishuNames) {
+    var __names = ROOT.kishuNames;
+    Object.keys(ROOT.stores).forEach(function (sid) {
+      var days = ROOT.stores[sid].days || {};
+      Object.keys(days).forEach(function (d) {
+        var rows = days[d].rows;
+        if (!rows) return;
+        for (var i = 0; i < rows.length; i++) {
+          if (typeof rows[i].k === "number") rows[i].k = __names[rows[i].k] || "";
+        }
+      });
+    });
+  }
+
+  // データが1日も無い店舗は選択肢に出さない（追加直後でまだ未収集の店舗など）
+  // 表示順は config.json の order（無ければ店舗名）に従う。
+  // index.json 自体はキーをソートして保存されるため、オブジェクトの並びには頼らない。
+  var storeIds = Object.keys(ROOT.stores).filter(function (sid) {
+    return Object.keys(ROOT.stores[sid].days || {}).length > 0;
+  });
+  storeIds.sort(function (a, b) {
+    var oa = ROOT.stores[a].order || 0, ob = ROOT.stores[b].order || 0;
+    if (oa !== ob) return oa - ob;
+    return ROOT.stores[a].name < ROOT.stores[b].name ? -1 : 1;
+  });
+  if (!storeIds.length) {
+    fatal("\u30c7\u30fc\u30bf\u304c\u307e\u3060\u3042\u308a\u307e\u305b\u3093",
+      "scrape.py \u3092\u5b9f\u884c\u3057\u3066\u30c7\u30fc\u30bf\u3092\u53d6\u5f97\u3057\u3066\u304b\u3089\u958b\u3044\u3066\u304f\u3060\u3055\u3044\u3002");
+    return;
+  }
+  var currentStoreId = storeIds[0];
+  var DATA = null;  // 選択中の店舗のビュー（loadStoreData で差し替わる）
+  var fmt = new Intl.NumberFormat("ja-JP");
+  var fmt1 = new Intl.NumberFormat("ja-JP", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+  function signClass(v) {
+    if (v === null || v === undefined) return "zero";
+    if (v > 0) return "pos";
+    if (v < 0) return "neg";
+    return "zero";
+  }
+  function signed(v) {
+    if (v === null || v === undefined) return "\u2014";
+    if (v > 0) return "+" + fmt.format(v);
+    return fmt.format(v);
+  }
+  function pad2(n) { return n < 10 ? "0" + n : "" + n; }
+  function isoFromDate(d) { return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()); }
+  function addDaysIso(iso, delta) {
+    var d = new Date(iso + "T00:00:00");
+    d.setDate(d.getDate() + delta);
+    return isoFromDate(d);
+  }
+
+  // ---------- Derive the full day-by-day trend series from DATA.days ----------
+  // DATA.days: { "YYYY-MM-DD": {weekday, rows:[{k,d,s,g,p},...]} } (rows present)
+  //                                    or {weekday, trend:{t,a,g}} (older summary-only days)
+  // これらは店舗を切り替えるたびに作り直す。var で宣言して「代入」で更新するので、
+  // 先に登録済みのイベントハンドラも同じ変数を見続ける（クロージャは値ではなく変数を捕捉する）。
+  // wins / played は「曜日・日付の傾向」の注記でも使うので、KPI描画の外で保持する
+  var sortedDates, trendAll, trendFiltered, firstDate, lastDate, latest, wins = 0, played = 0;
+  var currentRangeFrom = null, currentRangeTo = null; // null = no bound (全期間)
+  var kpiRow = document.getElementById("kpi-row");
+
+  function deriveTrend() {
+    return sortedDates.map(function (dateStr) {
+      var day = DATA.days[dateStr];
+      var t = null, a = null, g = null;
+      if (day.rows) {
+        var sum = 0, sumG = 0, n = 0, nG = 0;
+        day.rows.forEach(function (r) {
+          if (r.s !== null && r.s !== undefined) { sum += r.s; n++; }
+          if (r.g !== null && r.g !== undefined) { sumG += r.g; nG++; }
+        });
+        t = n ? sum : null;
+        a = n ? Math.round(sum / n) : null;
+        g = nG ? Math.round(sumG / nG) : null;
+      } else if (day.trend) {
+        t = day.trend.t; a = day.trend.a; g = day.trend.g;
+      }
+      var parts = dateStr.split("-");
+      return {
+        date: dateStr, mo: parseInt(parts[1], 10), dom: parseInt(parts[2], 10),
+        w: day.weekday, t: t, a: a, g: g, hasRows: !!day.rows
+      };
+    });
+  }
+
+  function renderHeaderMeta() {
+    var fullDaysCount = sortedDates.filter(function (d) { return !!DATA.days[d].rows; }).length;
+    document.getElementById("store-name").textContent = DATA.store;
+    // 公開用ビルドでは tagUrl を落としてあるので、その場合はリンクにせず名前だけ出す
+    var sourceLabel = DATA.tagUrl
+      ? "<a href=\"" + DATA.tagUrl + "\" target=\"_blank\" rel=\"noopener\">" + DATA.sourceName + "</a>"
+      : DATA.sourceName;
+    document.getElementById("hero-sub").innerHTML =
+      "集計期間 " + firstDate + " \u2192 " + lastDate + "\uff08\u5168" + sortedDates.length + "\u65e5\u5206\u3001\u53f0\u5225\u8a73\u7d30" + fullDaysCount + "\u65e5\u5206\uff09 \uff0f \u30c7\u30fc\u30bf\u63d0\u4f9b: " +
+      sourceLabel;
+    document.getElementById("hero-updated").textContent = "\u30c7\u30fc\u30bf\u66f4\u65b0: " + (DATA.lastUpdated || "\u2014");
+    document.getElementById("kpi-date").textContent = lastDate;
+    document.getElementById("footer-source").textContent = DATA.tagUrl
+      ? "\u30c7\u30fc\u30bf\u51fa\u5178: " + DATA.sourceName + " / \u4e00\u89a7\u30da\u30fc\u30b8: " + DATA.tagUrl
+      : "\u30c7\u30fc\u30bf\u51fa\u5178: " + DATA.sourceName + "\u306e\u72ec\u81ea\u96c6\u8a08\u5024\uff08\u516c\u5f0f\u767a\u8868\u5024\u3067\u306f\u3042\u308a\u307e\u305b\u3093\uff09";
+  }
+
+  // ---------- KPI tiles (always the latest day, independent of the range filter) ----------
+  function renderKpis() {
+    var prev = trendAll.length > 1 ? trendAll[trendAll.length - 2] : null;
+    var latestRows = (DATA.days[lastDate] && DATA.days[lastDate].rows) || [];
+    wins = latestRows.filter(function (r) { return r.s !== null && r.s > 0; }).length;
+    played = latestRows.filter(function (r) { return r.s !== null; }).length;
+
+    var kpis = [
+      { label: "総差枚", value: signed(latest.t), cls: signClass(latest.t),
+        delta: prev ? "前日 " + signed(prev.t) : "" },
+      { label: "平均差枚（1台あたり）", value: signed(latest.a), cls: signClass(latest.a),
+        delta: prev ? "前日 " + signed(prev.a) : "" },
+      { label: "平均G数", value: latest.g === null ? "\u2014" : fmt.format(latest.g), cls: "",
+        delta: prev && prev.g !== null ? "前日 " + fmt.format(prev.g) : "" },
+      { label: "勝率（差枚プラス台数）", value: played ? (wins + " / " + played) : "\u2014", cls: "",
+        delta: played ? (wins / played * 100).toFixed(1) + "%" : "" },
+    ];
+    kpiRow.innerHTML = "";
+    kpis.forEach(function (k) {
+      var el = document.createElement("div");
+      el.className = "kpi";
+      var l = document.createElement("div"); l.className = "label"; l.textContent = k.label;
+      var v = document.createElement("div"); v.className = "value" + (k.cls ? " " + k.cls : ""); v.textContent = k.value;
+      var d = document.createElement("div"); d.className = "delta"; d.textContent = k.delta;
+      el.appendChild(l); el.appendChild(v); el.appendChild(d);
+      kpiRow.appendChild(el);
+    });
+  }
+
+  // 選択中の店舗のデータを読み込み、店舗に依存する状態をすべて作り直す
+  function loadStoreData(sid) {
+    var s = ROOT.stores[sid];
+    currentStoreId = sid;
+    DATA = {
+      store: s.name, days: s.days || {}, tagUrl: s.tagUrl,
+      sourceName: ROOT.sourceName, lastUpdated: ROOT.lastUpdated
+    };
+    sortedDates = Object.keys(DATA.days).sort();
+    trendAll = deriveTrend();
+    trendFiltered = trendAll.slice();
+    currentRangeFrom = null;
+    currentRangeTo = null;
+    firstDate = sortedDates[0];
+    lastDate = sortedDates[sortedDates.length - 1];
+    latest = trendAll[trendAll.length - 1];
+    renderHeaderMeta();
+    renderKpis();
+  }
+
+  loadStoreData(currentStoreId);
+
+  // ---------- Trend chart ----------
+  var svg = document.getElementById("trend-svg");
+  var tooltip = document.getElementById("tooltip");
+  var chartWrap = document.querySelector(".chart-wrap");
+  var legendEl = document.getElementById("chart-legend");
+  var metricButtons = document.querySelectorAll("#metric-toggle button");
+  var currentMetric = "a";
+
+  var W = 1000, H = 300, PAD_L = 46, PAD_R = 10, PAD_T = 14, PAD_B = 24;
+  var plotW = W - PAD_L - PAD_R, plotH = H - PAD_T - PAD_B;
+
+  var METRIC_META = {
+    a: { label: "平均差枚", diverging: true, unit: "枚" },
+    t: { label: "総差枚", diverging: true, unit: "枚" },
+    g: { label: "平均G数", diverging: false, unit: "G" }
+  };
+
+  function niceTicks(min, max, count) {
+    if (min === max) { min -= 1; max += 1; }
+    var range = max - min;
+    var rough = range / count;
+    var mag = Math.pow(10, Math.floor(Math.log10(rough)));
+    var norm = rough / mag;
+    var step;
+    if (norm < 1.5) step = 1 * mag;
+    else if (norm < 3) step = 2 * mag;
+    else if (norm < 7) step = 5 * mag;
+    else step = 10 * mag;
+    var start = Math.floor(min / step) * step;
+    var end = Math.ceil(max / step) * step;
+    var ticks = [];
+    for (var v = start; v <= end + step * 0.5; v += step) ticks.push(Math.round(v * 100) / 100);
+    return ticks;
+  }
+
+  function ns(tag) { return document.createElementNS("http://www.w3.org/2000/svg", tag); }
+
+  function renderChart(metric) {
+    currentMetric = metric;
+    document.getElementById("trend-range").textContent = trendFiltered.length ?
+      (trendFiltered[0].date + " \u2192 " + trendFiltered[trendFiltered.length - 1].date + "\uff08" + trendFiltered.length + "\u65e5\u5206\uff09") : "\u2014";
+    var meta = METRIC_META[metric];
+    var series = trendFiltered.map(function (r) { return r[metric]; });
+    var valid = series.filter(function (v) { return v !== null; });
+    if (valid.length === 0) valid = [0];
+    var min = Math.min.apply(null, valid);
+    var max = Math.max.apply(null, valid);
+    if (meta.diverging) { min = Math.min(min, 0); max = Math.max(max, 0); }
+    else { min = Math.min(min, 0); }
+    var ticks = niceTicks(min, max, 5);
+    var yMin = ticks[0], yMax = ticks[ticks.length - 1];
+
+    var nPts = Math.max(trendFiltered.length, 1);
+    function x(i) { return PAD_L + (nPts > 1 ? (i / (nPts - 1)) * plotW : plotW / 2); }
+    function y(v) { return PAD_T + plotH - ((v - yMin) / (yMax - yMin)) * plotH; }
+
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    // gridlines + y labels
+    ticks.forEach(function (t) {
+      var ly = y(t);
+      var line = ns("line");
+      line.setAttribute("x1", PAD_L); line.setAttribute("x2", W - PAD_R);
+      line.setAttribute("y1", ly); line.setAttribute("y2", ly);
+      line.setAttribute("stroke", "var(--grid)"); line.setAttribute("stroke-width", "1");
+      svg.appendChild(line);
+      var label = ns("text");
+      label.setAttribute("x", PAD_L - 8); label.setAttribute("y", ly + 3);
+      label.setAttribute("text-anchor", "end"); label.setAttribute("font-size", "10");
+      label.setAttribute("font-family", "Roboto Mono, monospace");
+      label.setAttribute("fill", "var(--ink-muted)");
+      label.textContent = fmt.format(t);
+      svg.appendChild(label);
+    });
+
+    // zero baseline emphasized
+    if (yMin < 0 && yMax > 0) {
+      var zl = ns("line");
+      zl.setAttribute("x1", PAD_L); zl.setAttribute("x2", W - PAD_R);
+      zl.setAttribute("y1", y(0)); zl.setAttribute("y2", y(0));
+      zl.setAttribute("stroke", "var(--baseline)"); zl.setAttribute("stroke-width", "1.25");
+      svg.appendChild(zl);
+    }
+
+    // month tick labels (x axis) - first day of each month present
+    var seenMonths = {};
+    trendFiltered.forEach(function (r, i) {
+      var m = r.date.slice(0, 7);
+      if (!seenMonths[m]) {
+        seenMonths[m] = true;
+        var lbl = ns("text");
+        lbl.setAttribute("x", x(i)); lbl.setAttribute("y", H - 6);
+        lbl.setAttribute("text-anchor", "start"); lbl.setAttribute("font-size", "10");
+        lbl.setAttribute("font-family", "Roboto Mono, monospace");
+        lbl.setAttribute("fill", "var(--ink-muted)");
+        lbl.textContent = (parseInt(r.date.slice(5, 7), 10)) + "\u6708";
+        svg.appendChild(lbl);
+      }
+    });
+
+    if (!meta.diverging) {
+      // sequential single-hue area + line
+      var pathD = "M " + x(0) + " " + y(series[0] === null ? 0 : series[0]);
+      var areaD = "M " + x(0) + " " + y(0);
+      series.forEach(function (v, i) {
+        var vv = v === null ? 0 : v;
+        pathD += " L " + x(i) + " " + y(vv);
+        areaD += " L " + x(i) + " " + y(vv);
+      });
+      areaD += " L " + x(series.length - 1) + " " + y(0) + " Z";
+      var area = ns("path");
+      area.setAttribute("d", areaD); area.setAttribute("fill", "var(--pos)"); area.setAttribute("opacity", "0.10");
+      svg.appendChild(area);
+      var line = ns("path");
+      line.setAttribute("d", pathD); line.setAttribute("fill", "none");
+      line.setAttribute("stroke", "var(--pos)"); line.setAttribute("stroke-width", "2");
+      line.setAttribute("stroke-linejoin", "round"); line.setAttribute("stroke-linecap", "round");
+      svg.appendChild(line);
+      legendEl.innerHTML = "";
+    } else {
+      // diverging: clip pos/neg portions relative to zero baseline
+      var zeroY = y(0);
+      var posClip = ns("clipPath"); posClip.setAttribute("id", "clip-pos");
+      var posRect = ns("rect");
+      posRect.setAttribute("x", PAD_L); posRect.setAttribute("y", PAD_T);
+      posRect.setAttribute("width", plotW); posRect.setAttribute("height", Math.max(0, zeroY - PAD_T));
+      posClip.appendChild(posRect); svg.appendChild(posClip);
+
+      var negClip = ns("clipPath"); negClip.setAttribute("id", "clip-neg");
+      var negRect = ns("rect");
+      negRect.setAttribute("x", PAD_L); negRect.setAttribute("y", zeroY);
+      negRect.setAttribute("width", plotW); negRect.setAttribute("height", Math.max(0, (PAD_T + plotH) - zeroY));
+      negClip.appendChild(negRect); svg.appendChild(negClip);
+
+      var pathD = "M " + x(0) + " " + y(series[0] === null ? 0 : series[0]);
+      var areaD = "M " + x(0) + " " + y(0);
+      series.forEach(function (v, i) {
+        var vv = v === null ? 0 : v;
+        pathD += " L " + x(i) + " " + y(vv);
+        areaD += " L " + x(i) + " " + y(vv);
+      });
+      areaD += " L " + x(series.length - 1) + " " + y(0) + " Z";
+
+      [["pos", "clip-pos"], ["neg", "clip-neg"]].forEach(function (pair) {
+        var areaEl = ns("path");
+        areaEl.setAttribute("d", areaD);
+        areaEl.setAttribute("fill", "var(--" + pair[0] + ")");
+        areaEl.setAttribute("opacity", "0.12");
+        areaEl.setAttribute("clip-path", "url(#" + pair[1] + ")");
+        svg.appendChild(areaEl);
+        var lineEl = ns("path");
+        lineEl.setAttribute("d", pathD); lineEl.setAttribute("fill", "none");
+        lineEl.setAttribute("stroke", "var(--" + pair[0] + ")"); lineEl.setAttribute("stroke-width", "2");
+        lineEl.setAttribute("stroke-linejoin", "round"); lineEl.setAttribute("stroke-linecap", "round");
+        lineEl.setAttribute("clip-path", "url(#" + pair[1] + ")");
+        svg.appendChild(lineEl);
+      });
+
+      legendEl.innerHTML = "";
+      var k1 = document.createElement("span"); k1.className = "key";
+      k1.innerHTML = '<span class="swatch" style="background:var(--pos)"></span>お客様側がプラス';
+      var k2 = document.createElement("span"); k2.className = "key";
+      k2.innerHTML = '<span class="swatch" style="background:var(--neg)"></span>店側がプラス（客側マイナス）';
+      legendEl.appendChild(k1); legendEl.appendChild(k2);
+    }
+
+    // end marker
+    var lastIdx = series.length - 1;
+    var lastV = series[lastIdx] === null ? 0 : series[lastIdx];
+    var dot = ns("circle");
+    dot.setAttribute("cx", x(lastIdx)); dot.setAttribute("cy", y(lastV)); dot.setAttribute("r", "4");
+    dot.setAttribute("fill", meta.diverging ? (lastV >= 0 ? "var(--pos)" : "var(--neg)") : "var(--pos)");
+    dot.setAttribute("stroke", "var(--surface)"); dot.setAttribute("stroke-width", "2");
+    svg.appendChild(dot);
+
+    // crosshair + hit layer
+    var crosshair = ns("line");
+    crosshair.setAttribute("y1", PAD_T); crosshair.setAttribute("y2", PAD_T + plotH);
+    crosshair.setAttribute("stroke", "var(--ink-muted)"); crosshair.setAttribute("stroke-width", "1");
+    crosshair.setAttribute("opacity", "0"); crosshair.setAttribute("id", "crosshair");
+    svg.appendChild(crosshair);
+    var hoverDot = ns("circle");
+    hoverDot.setAttribute("r", "4.5"); hoverDot.setAttribute("opacity", "0"); hoverDot.setAttribute("id", "hoverdot");
+    hoverDot.setAttribute("stroke", "var(--surface)"); hoverDot.setAttribute("stroke-width", "2");
+    svg.appendChild(hoverDot);
+
+    var hit = ns("rect");
+    hit.setAttribute("x", PAD_L); hit.setAttribute("y", 0);
+    hit.setAttribute("width", plotW); hit.setAttribute("height", H);
+    hit.setAttribute("fill", "transparent");
+    svg.appendChild(hit);
+
+    function pointerMove(evt) {
+      var rect = svg.getBoundingClientRect();
+      var clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+      var px = (clientX - rect.left) / rect.width * W;
+      var idx = Math.round((px - PAD_L) / plotW * (trendFiltered.length - 1));
+      idx = Math.max(0, Math.min(trendFiltered.length - 1, idx));
+      var v = series[idx];
+      var vv = v === null ? 0 : v;
+      var cx = x(idx), cy = y(vv);
+      document.getElementById("crosshair").setAttribute("x1", cx);
+      document.getElementById("crosshair").setAttribute("x2", cx);
+      document.getElementById("crosshair").setAttribute("opacity", "1");
+      var hd = document.getElementById("hoverdot");
+      hd.setAttribute("cx", cx); hd.setAttribute("cy", cy); hd.setAttribute("opacity", "1");
+      hd.setAttribute("fill", meta.diverging ? (vv >= 0 ? "var(--pos)" : "var(--neg)") : "var(--pos)");
+
+      var wrapRect = chartWrap.getBoundingClientRect();
+      var svgScaleX = rect.width / W, svgScaleY = rect.height / H;
+      tooltip.style.left = (rect.left - wrapRect.left + cx * svgScaleX) + "px";
+      tooltip.style.top = (rect.top - wrapRect.top + cy * svgScaleY) + "px";
+      tooltip.style.opacity = "1";
+      var dateLbl = trendFiltered[idx].date;
+      tooltip.innerHTML =
+        '<div class="tt-date">' + dateLbl + '</div>' +
+        '<div class="tt-val" style="color:' + (v === null ? 'var(--ink-muted)' : (meta.diverging ? (vv >= 0 ? 'var(--pos)' : 'var(--neg)') : 'var(--pos)')) + '">' +
+        (v === null ? "\u2014" : (v > 0 && meta.diverging ? "+" : "") + fmt.format(v) + meta.unit) + '</div>';
+    }
+    function pointerLeave() {
+      document.getElementById("crosshair").setAttribute("opacity", "0");
+      document.getElementById("hoverdot").setAttribute("opacity", "0");
+      tooltip.style.opacity = "0";
+    }
+    hit.addEventListener("pointermove", pointerMove);
+    hit.addEventListener("pointerleave", pointerLeave);
+    hit.addEventListener("touchmove", pointerMove, { passive: true });
+  }
+
+  metricButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      metricButtons.forEach(function (b) { b.classList.remove("active"); b.setAttribute("aria-selected", "false"); });
+      btn.classList.add("active"); btn.setAttribute("aria-selected", "true");
+      renderChart(btn.getAttribute("data-metric"));
+    });
+  });
+  renderChart("a");
+
+  // ---------- Weekday / day-of-month average ----------
+  var WEEKDAY_ORDER = ["\u6708", "\u706b", "\u6c34", "\u6728", "\u91d1", "\u571f", "\u65e5"]; // 月火水木金土日
+  var patternsMetric = "a";
+
+  function aggregateAvg(keyFn, metric) {
+    var buckets = {};
+    trendFiltered.forEach(function (r) {
+      var k = keyFn(r);
+      if (!buckets[k]) buckets[k] = { sum: 0, count: 0 };
+      var v = r[metric];
+      if (v !== null && v !== undefined) {
+        buckets[k].sum += v;
+        buckets[k].count += 1;
+      }
+    });
+    return buckets;
+  }
+
+  function renderAvgBarChart(svgEl, categories, buckets, labelFn) {
+    var W2 = 500, H2 = 220, PL = 40, PR = 8, PT = 10, PB = 26;
+    var pw = W2 - PL - PR, ph = H2 - PT - PB;
+    var n = categories.length;
+    var slot = pw / n;
+    var barW = Math.min(24, slot * 0.62);
+
+    var avgs = categories.map(function (cat) {
+      var b = buckets[cat] || { sum: 0, count: 0 };
+      return b.count > 0 ? b.sum / b.count : null;
+    });
+    var valid = avgs.filter(function (v) { return v !== null; });
+    var dataMin = valid.length ? Math.min.apply(null, valid) : 0;
+    var dataMax = valid.length ? Math.max.apply(null, valid) : 0;
+    var ticks = niceTicks(Math.min(0, dataMin), Math.max(0, dataMax), 4);
+    var yMin = ticks[0], yMax = ticks[ticks.length - 1];
+
+    while (svgEl.firstChild) svgEl.removeChild(svgEl.firstChild);
+
+    function y(v) { return PT + ph - ((v - yMin) / (yMax - yMin)) * ph; }
+
+    ticks.forEach(function (t) {
+      var ly = y(t);
+      var line = ns("line");
+      line.setAttribute("x1", PL); line.setAttribute("x2", W2 - PR);
+      line.setAttribute("y1", ly); line.setAttribute("y2", ly);
+      line.setAttribute("stroke", "var(--grid)"); line.setAttribute("stroke-width", "1");
+      svgEl.appendChild(line);
+      var lbl = ns("text");
+      lbl.setAttribute("x", PL - 6); lbl.setAttribute("y", ly + 3);
+      lbl.setAttribute("text-anchor", "end"); lbl.setAttribute("font-size", "9");
+      lbl.setAttribute("font-family", "Roboto Mono, monospace");
+      lbl.setAttribute("fill", "var(--ink-muted)");
+      lbl.textContent = fmt.format(t);
+      svgEl.appendChild(lbl);
+    });
+    if (yMin < 0 && yMax > 0) {
+      var zl = ns("line");
+      zl.setAttribute("x1", PL); zl.setAttribute("x2", W2 - PR);
+      zl.setAttribute("y1", y(0)); zl.setAttribute("y2", y(0));
+      zl.setAttribute("stroke", "var(--baseline)"); zl.setAttribute("stroke-width", "1.25");
+      svgEl.appendChild(zl);
+    }
+
+    var hitTargets = [];
+    categories.forEach(function (cat, i) {
+      var avg = avgs[i];
+      var b = buckets[cat] || { sum: 0, count: 0 };
+      var cx = PL + slot * i + slot / 2;
+      var baseY = y(0);
+      var valY = avg === null ? baseY : y(avg);
+      var top = Math.min(baseY, valY), h = Math.abs(baseY - valY);
+      var rect = ns("rect");
+      rect.setAttribute("x", cx - barW / 2);
+      rect.setAttribute("y", top);
+      rect.setAttribute("width", barW);
+      rect.setAttribute("height", Math.max(avg === null ? 2 : 0, h));
+      rect.setAttribute("rx", "3");
+      rect.setAttribute("fill", avg === null ? "var(--grid)" : (avg >= 0 ? "var(--pos)" : "var(--neg)"));
+      rect.setAttribute("opacity", avg === null ? "1" : "0.85");
+      svgEl.appendChild(rect);
+
+      if (n <= 10 || i % 5 === 0 || i === n - 1) {
+        var xlbl = ns("text");
+        xlbl.setAttribute("x", cx); xlbl.setAttribute("y", H2 - 8);
+        xlbl.setAttribute("text-anchor", "middle"); xlbl.setAttribute("font-size", "9.5");
+        xlbl.setAttribute("font-family", "Roboto Mono, monospace");
+        xlbl.setAttribute("fill", "var(--ink-muted)");
+        xlbl.textContent = labelFn(cat);
+        svgEl.appendChild(xlbl);
+      }
+
+      var hit = ns("rect");
+      hit.setAttribute("x", PL + slot * i); hit.setAttribute("y", PT);
+      hit.setAttribute("width", slot); hit.setAttribute("height", ph);
+      hit.setAttribute("fill", "transparent");
+      hit.setAttribute("data-cat", labelFn(cat));
+      hit.setAttribute("data-avg", avg === null ? "" : Math.round(avg));
+      hit.setAttribute("data-n", b.count);
+      hit.setAttribute("data-cx", cx);
+      hit.setAttribute("data-cy", valY);
+      svgEl.appendChild(hit);
+      hitTargets.push(hit);
+    });
+
+    var barTooltip = document.getElementById("bar-tooltip-shared");
+    if (!barTooltip) {
+      barTooltip = document.createElement("div");
+      barTooltip.id = "bar-tooltip-shared";
+      barTooltip.className = "tt";
+      document.body.appendChild(barTooltip);
+    }
+    hitTargets.forEach(function (hit) {
+      hit.addEventListener("pointermove", function () {
+        var rect = svgEl.getBoundingClientRect();
+        var scaleX = rect.width / W2, scaleY = rect.height / H2;
+        var cx = parseFloat(hit.getAttribute("data-cx"));
+        var cy = parseFloat(hit.getAttribute("data-cy"));
+        barTooltip.style.left = (rect.left + window.scrollX + cx * scaleX) + "px";
+        barTooltip.style.top = (rect.top + window.scrollY + cy * scaleY) + "px";
+        barTooltip.style.position = "absolute";
+        barTooltip.style.opacity = "1";
+        var avgStr = hit.getAttribute("data-avg");
+        var nStr = hit.getAttribute("data-n");
+        var avgNum = avgStr === "" ? null : parseInt(avgStr, 10);
+        barTooltip.innerHTML =
+          '<div class="tt-date">' + hit.getAttribute("data-cat") + '\uff08n=' + nStr + '\uff09</div>' +
+          '<div class="tt-val" style="color:' + (avgNum === null ? "var(--ink-muted)" : (avgNum >= 0 ? "var(--pos)" : "var(--neg)")) + '">' +
+          (avgNum === null ? "\u30c7\u30fc\u30bf\u306a\u3057" : (avgNum > 0 ? "+" : "") + fmt.format(avgNum)) + "\u679a</div>";
+      });
+      hit.addEventListener("pointerleave", function () { barTooltip.style.opacity = "0"; });
+    });
+  }
+
+  var domCategories = [];
+  for (var dd = 1; dd <= 31; dd++) domCategories.push(dd);
+
+  function renderPatternsCharts() {
+    document.getElementById("patterns-range").textContent =
+      trendFiltered.length + "\u65e5\u5206\u306e\u96c6\u8a08";
+    var weekdayBuckets = aggregateAvg(function (r) { return r.w; }, patternsMetric);
+    var domBuckets = aggregateAvg(function (r) { return r.dom; }, patternsMetric);
+    renderAvgBarChart(document.getElementById("weekday-svg"), WEEKDAY_ORDER, weekdayBuckets, function (c) { return c; });
+    renderAvgBarChart(document.getElementById("dom-svg"), domCategories, domBuckets, function (c) { return c; });
+    var latestNote = played ?
+      ("\u53f0\u5358\u4f4d\u3067\u306f" + lastDate + "\u6642\u70b9\u3067" + played + "\u53f0\u4e2d" + wins + "\u53f0\u304c\u30d7\u30e9\u30b9\u306a\u306e\u3067\u3001\u5e97\u8217\u5168\u4f53\u3067\u306f\u5e38\u306b\u5ba2\u6709\u5229\u3068\u3044\u3046\u308f\u3051\u3067\u306f\u3042\u308a\u307e\u305b\u3093\u3002") : "";
+    document.getElementById("patterns-note").textContent =
+      "\u68d2\u306f\u305d\u306e\u66dc\u65e5\u30fb\u65e5\u4ed8\u306b\u8a72\u5f53\u3059\u308b\u89b3\u6e2c\u65e5\u306e\u5e73\u5747\u5024\uff08\u30c7\u30fc\u30bf\u304c\u3042\u308b\u65e5\u306e\u307f\u3067\u5e73\u5747\u3001\u65e5\u6570\u306f\u68d2\u306b\u30ab\u30fc\u30bd\u30eb\u3092\u5408\u308f\u305b\u308b\u3068\u8868\u793a\u3055\u308c\u307e\u3059\uff09\u3002\u9078\u629e\u4e2d\u306e\u671f\u9593\u306f\u7dcf\u5dee\u679a\u304c\u30de\u30a4\u30ca\u30b9\u306e\u65e5\u306e\u8a18\u9332\u304c\u5c11\u306a\u3044\uff08\u7121\u3044\uff09\u5834\u5408\u304c\u3042\u308a\u307e\u3059 \u2014 \u30c7\u30fc\u30bf\u63d0\u4f9b\u5143\u304c\u5927\u304d\u304f\u5d29\u308c\u305f\u65e5\u3092\u300c-\u300d\uff08\u672a\u63b2\u8f09\uff09\u306b\u3057\u3066\u3044\u308b\u53ef\u80fd\u6027\u304c\u3042\u308a\u307e\u3059\u3002" +
+      latestNote;
+  }
+
+  document.querySelectorAll("#patterns-metric-toggle button").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll("#patterns-metric-toggle button").forEach(function (b) {
+        b.classList.remove("active"); b.setAttribute("aria-selected", "false");
+      });
+      btn.classList.add("active"); btn.setAttribute("aria-selected", "true");
+      patternsMetric = btn.getAttribute("data-metric");
+      renderPatternsCharts();
+    });
+  });
+  renderPatternsCharts();
+
+  // ---------- Month overlay chart ----------
+  var MONTH_COLORS = ["--m1", "--m2", "--m3", "--m4", "--m5", "--m6", "--m7", "--m8"];
+  var monthsPresent = [];
+  var monthSeries = {}; // mo -> array[1..31] of {a,t}
+  var activeMonths = {};
+
+  function refreshOverlaySource() {
+    monthsPresent = [];
+    trendFiltered.forEach(function (r) { if (monthsPresent.indexOf(r.mo) === -1) monthsPresent.push(r.mo); });
+    monthsPresent.sort(function (a, b) { return a - b; });
+    monthSeries = {};
+    monthsPresent.forEach(function (mo) { monthSeries[mo] = {}; });
+    trendFiltered.forEach(function (r) { monthSeries[r.mo][r.dom] = { a: r.a, t: r.t }; });
+    var newActive = {};
+    monthsPresent.forEach(function (mo) { newActive[mo] = activeMonths.hasOwnProperty(mo) ? activeMonths[mo] : true; });
+    activeMonths = newActive;
+    document.getElementById("overlay-range").textContent =
+      monthsPresent.length ? monthsPresent.map(function (m) { return m + "\u6708"; }).join(" / ") : "\u2014";
+    renderMonthChips();
+    renderOverlayChart();
+  }
+
+  var overlaySvg = document.getElementById("overlay-svg");
+  var overlayTooltip = document.getElementById("overlay-tooltip");
+  var overlayWrap = overlaySvg.parentElement;
+  var overlayMetricButtons = document.querySelectorAll("#overlay-metric-toggle button");
+  var overlayMetric = "a";
+
+  function monthChipLabel(mo) { return mo + "\u6708"; }
+
+  function renderMonthChips() {
+    var container = document.getElementById("month-chips");
+    container.innerHTML = "";
+    monthsPresent.forEach(function (mo, i) {
+      var chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "chip" + (activeMonths[mo] ? " on" : "");
+      var dot = document.createElement("span");
+      dot.className = "dot";
+      dot.style.background = "var(" + MONTH_COLORS[i % MONTH_COLORS.length] + ")";
+      chip.appendChild(dot);
+      chip.appendChild(document.createTextNode(monthChipLabel(mo)));
+      chip.addEventListener("click", function () {
+        activeMonths[mo] = !activeMonths[mo];
+        renderMonthChips();
+        renderOverlayChart();
+      });
+      container.appendChild(chip);
+    });
+  }
+
+  function renderOverlayChart() {
+    var W3 = 1000, H3 = 320, PL = 46, PR = 14, PT = 14, PB = 26;
+    var pw = W3 - PL - PR, ph = H3 - PT - PB;
+    var visibleMonths = monthsPresent.filter(function (mo) { return activeMonths[mo]; });
+
+    var allVals = [];
+    visibleMonths.forEach(function (mo) {
+      for (var d = 1; d <= 31; d++) {
+        var pt = monthSeries[mo][d];
+        if (pt && pt[overlayMetric] !== null && pt[overlayMetric] !== undefined) allVals.push(pt[overlayMetric]);
+      }
+    });
+    if (allVals.length === 0) allVals = [0];
+    var minV = Math.min(0, Math.min.apply(null, allVals));
+    var maxV = Math.max(0, Math.max.apply(null, allVals));
+    var ticks = niceTicks(minV, maxV, 5);
+    var yMin = ticks[0], yMax = ticks[ticks.length - 1];
+
+    function x(d) { return PL + ((d - 1) / 30) * pw; }
+    function y(v) { return PT + ph - ((v - yMin) / (yMax - yMin)) * ph; }
+
+    while (overlaySvg.firstChild) overlaySvg.removeChild(overlaySvg.firstChild);
+
+    ticks.forEach(function (t) {
+      var ly = y(t);
+      var line = ns("line");
+      line.setAttribute("x1", PL); line.setAttribute("x2", W3 - PR);
+      line.setAttribute("y1", ly); line.setAttribute("y2", ly);
+      line.setAttribute("stroke", "var(--grid)"); line.setAttribute("stroke-width", "1");
+      overlaySvg.appendChild(line);
+      var lbl = ns("text");
+      lbl.setAttribute("x", PL - 8); lbl.setAttribute("y", ly + 3);
+      lbl.setAttribute("text-anchor", "end"); lbl.setAttribute("font-size", "10");
+      lbl.setAttribute("font-family", "Roboto Mono, monospace");
+      lbl.setAttribute("fill", "var(--ink-muted)");
+      lbl.textContent = fmt.format(t);
+      overlaySvg.appendChild(lbl);
+    });
+    if (yMin < 0 && yMax > 0) {
+      var zl = ns("line");
+      zl.setAttribute("x1", PL); zl.setAttribute("x2", W3 - PR);
+      zl.setAttribute("y1", y(0)); zl.setAttribute("y2", y(0));
+      zl.setAttribute("stroke", "var(--baseline)"); zl.setAttribute("stroke-width", "1.25");
+      overlaySvg.appendChild(zl);
+    }
+    [1, 5, 10, 15, 20, 25, 30].forEach(function (d) {
+      var lbl = ns("text");
+      lbl.setAttribute("x", x(d)); lbl.setAttribute("y", H3 - 6);
+      lbl.setAttribute("text-anchor", "middle"); lbl.setAttribute("font-size", "10");
+      lbl.setAttribute("font-family", "Roboto Mono, monospace");
+      lbl.setAttribute("fill", "var(--ink-muted)");
+      lbl.textContent = d;
+      overlaySvg.appendChild(lbl);
+    });
+
+    visibleMonths.forEach(function (mo) {
+      var idx = monthsPresent.indexOf(mo);
+      var colorVar = "var(" + MONTH_COLORS[idx % MONTH_COLORS.length] + ")";
+      var pathD = null;
+      for (var d = 1; d <= 31; d++) {
+        var pt = monthSeries[mo][d];
+        if (!pt || pt[overlayMetric] === null || pt[overlayMetric] === undefined) continue;
+        var cmd = (pathD === null ? "M " : "L ") + x(d) + " " + y(pt[overlayMetric]);
+        pathD = (pathD === null ? "" : pathD + " ") + cmd;
+      }
+      if (!pathD) return;
+      var line = ns("path");
+      line.setAttribute("d", pathD); line.setAttribute("fill", "none");
+      line.setAttribute("stroke", colorVar); line.setAttribute("stroke-width", "2");
+      line.setAttribute("stroke-linejoin", "round"); line.setAttribute("stroke-linecap", "round");
+      line.setAttribute("opacity", "0.9");
+      overlaySvg.appendChild(line);
+    });
+
+    var crosshair = ns("line");
+    crosshair.setAttribute("y1", PT); crosshair.setAttribute("y2", PT + ph);
+    crosshair.setAttribute("stroke", "var(--ink-muted)"); crosshair.setAttribute("stroke-width", "1");
+    crosshair.setAttribute("opacity", "0");
+    overlaySvg.appendChild(crosshair);
+
+    var hit = ns("rect");
+    hit.setAttribute("x", PL); hit.setAttribute("y", 0);
+    hit.setAttribute("width", pw); hit.setAttribute("height", H3);
+    hit.setAttribute("fill", "transparent");
+    overlaySvg.appendChild(hit);
+
+    function pointerMove(evt) {
+      var rect = overlaySvg.getBoundingClientRect();
+      var clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+      var px = (clientX - rect.left) / rect.width * W3;
+      var d = Math.round(((px - PL) / pw) * 30) + 1;
+      d = Math.max(1, Math.min(31, d));
+      crosshair.setAttribute("x1", x(d)); crosshair.setAttribute("x2", x(d));
+      crosshair.setAttribute("opacity", "1");
+
+      var wrapRect = overlayWrap.getBoundingClientRect();
+      var scaleX = rect.width / W3;
+      overlayTooltip.style.left = (rect.left - wrapRect.left + x(d) * scaleX) + "px";
+      overlayTooltip.style.top = (rect.top - wrapRect.top + PT) + "px";
+      overlayTooltip.style.opacity = "1";
+      var rowsHtml = '<div class="tt-date">' + d + "\u65e5\u76ee</div>";
+      visibleMonths.forEach(function (mo) {
+        var idx = monthsPresent.indexOf(mo);
+        var colorVar = "var(" + MONTH_COLORS[idx % MONTH_COLORS.length] + ")";
+        var pt = monthSeries[mo][d];
+        var val = pt ? pt[overlayMetric] : null;
+        rowsHtml += '<div style="display:flex;align-items:center;gap:6px;justify-content:space-between;">' +
+          '<span style="display:inline-flex;align-items:center;gap:5px;color:var(--ink-2);font-size:11px;">' +
+          '<span style="width:10px;height:2px;background:' + colorVar + ';display:inline-block;"></span>' + mo + '\u6708</span>' +
+          '<span class="tt-val" style="font-size:12px;color:' + colorVar + '">' +
+          (val === null || val === undefined ? "\u2014" : (val > 0 ? "+" : "") + fmt.format(val)) + '</span></div>';
+      });
+      overlayTooltip.innerHTML = rowsHtml;
+    }
+    function pointerLeave() { crosshair.setAttribute("opacity", "0"); overlayTooltip.style.opacity = "0"; }
+    hit.addEventListener("pointermove", pointerMove);
+    hit.addEventListener("pointerleave", pointerLeave);
+    hit.addEventListener("touchmove", pointerMove, { passive: true });
+  }
+
+  overlayMetricButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      overlayMetricButtons.forEach(function (b) { b.classList.remove("active"); b.setAttribute("aria-selected", "false"); });
+      btn.classList.add("active"); btn.setAttribute("aria-selected", "true");
+      overlayMetric = btn.getAttribute("data-metric");
+      renderOverlayChart();
+    });
+  });
+  refreshOverlaySource();
+
+  // ---------- Unit x date matrix (derived client-side from DATA.days, scoped to the range filter) ----------
+  var kishuSelect = document.getElementById("matrix-kishu");
+  var matrixM = { dates: [], byKishu: {} };
+
+  function buildMatrixSource(fromIso, toIso) {
+    var dts = sortedDates.filter(function (d) {
+      if (!DATA.days[d].rows) return false;
+      if (fromIso && d < fromIso) return false;
+      if (toIso && d > toIso) return false;
+      return true;
+    });
+    var byKishu = {};
+    dts.forEach(function (d, di) {
+      DATA.days[d].rows.forEach(function (r) {
+        if (r.d === null || r.d === undefined) return;
+        if (!byKishu[r.k]) byKishu[r.k] = { unitsSet: {}, cellMap: {} };
+        byKishu[r.k].unitsSet[r.d] = true;
+        byKishu[r.k].cellMap[r.d + "_" + di] = r.s;
+      });
+    });
+    var out = {};
+    Object.keys(byKishu).forEach(function (k) {
+      var units = Object.keys(byKishu[k].unitsSet).map(Number).sort(function (a, b) { return a - b; });
+      var cells = units.map(function (u) {
+        return dts.map(function (_, di) {
+          var v = byKishu[k].cellMap[u + "_" + di];
+          return v === undefined ? null : v;
+        });
+      });
+      out[k] = { units: units, cells: cells };
+    });
+    return { dates: dts, byKishu: out };
+  }
+
+  // マトリクスと勝率は、上部のグローバル期間指定とは別の、専用の期間を持つ
+  var matrixRangeFrom = null, matrixRangeTo = null;
+
+  function refreshMatrixSource() {
+    var prevSelected = kishuSelect.value;
+    matrixM = buildMatrixSource(matrixRangeFrom, matrixRangeTo);
+    var dts = matrixM.dates;
+    document.getElementById("matrix-range").textContent = dts.length ?
+      (dts[0] + " \u2192 " + dts[dts.length - 1] + "\uff08" + dts.length + "\u65e5\u5206\uff09") : "\u30c7\u30fc\u30bf\u306a\u3057";
+
+    var kishuNames = Object.keys(matrixM.byKishu).sort(function (a, b) {
+      return matrixM.byKishu[b].units.length - matrixM.byKishu[a].units.length || a.localeCompare(b, "ja");
+    });
+    while (kishuSelect.firstChild) kishuSelect.removeChild(kishuSelect.firstChild);
+    kishuNames.forEach(function (name) {
+      var opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name + "\uff08" + matrixM.byKishu[name].units.length + "\u53f0\uff09";
+      kishuSelect.appendChild(opt);
+    });
+
+    if (kishuNames.length === 0) {
+      document.getElementById("matrix-count").textContent = "\u8868\u793a\u3067\u304d\u308b\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093";
+      ["matrix-head-row", "matrix-body", "matrix-foot-sum", "matrix-foot-plus"].forEach(function (id) {
+        var el = document.getElementById(id);
+        while (el.firstChild) el.removeChild(el.firstChild);
+      });
+      return;
+    }
+    kishuSelect.value = kishuNames.indexOf(prevSelected) !== -1 ? prevSelected : kishuNames[0];
+    renderMatrix();
+  }
+
+  function bg(v, maxAbs) {
+    if (v === null || v === undefined || !maxAbs) return "";
+    var pct = Math.min(Math.abs(v) / maxAbs, 1) * 55;
+    var hue = v > 0 ? "--pos" : (v < 0 ? "--neg" : null);
+    if (!hue) return "";
+    return "color-mix(in srgb, var(" + hue + ") " + pct.toFixed(1) + "%, var(--surface))";
+  }
+
+  function renderMatrix() {
+    var name = kishuSelect.value;
+    var entry = matrixM.byKishu[name];
+    if (!entry) return;
+    var dates = matrixM.dates;
+    var units = entry.units;
+    var cells = entry.cells; // cells[unitIdx][dateIdx]
+
+    // row totals (per date, across units) and column totals (per unit, across dates)
+    var rowTotal = dates.map(function (_, di) {
+        var sum = null;
+        for (var ui = 0; ui < units.length; ui++) {
+          var v = cells[ui][di];
+          if (v !== null) { sum = (sum === null ? 0 : sum) + v; }
+        }
+        return sum;
+      });
+      var colTotal = units.map(function (_, ui) {
+        var sum = null, plus = 0, withData = 0;
+        for (var di = 0; di < dates.length; di++) {
+          var v = cells[ui][di];
+          if (v !== null) {
+            sum = (sum === null ? 0 : sum) + v;
+            withData++;
+            if (v > 0) plus++;
+          }
+        }
+        return { sum: sum, plus: plus, withData: withData };
+      });
+      var grandTotal = null;
+      colTotal.forEach(function (c) { if (c.sum !== null) grandTotal = (grandTotal === null ? 0 : grandTotal) + c.sum; });
+      var overallPlusDays = rowTotal.filter(function (v) { return v !== null && v > 0; }).length;
+      var overallDaysWithData = rowTotal.filter(function (v) { return v !== null; }).length;
+
+      var maxAbsCell = 0;
+      cells.forEach(function (row) { row.forEach(function (v) { if (v !== null) maxAbsCell = Math.max(maxAbsCell, Math.abs(v)); }); });
+      var maxAbsRowTotal = Math.max.apply(null, rowTotal.filter(function (v) { return v !== null; }).map(Math.abs).concat([0]));
+      var maxAbsColTotal = Math.max.apply(null, colTotal.map(function (c) { return c.sum === null ? 0 : Math.abs(c.sum); }).concat([0]));
+
+      // head row
+      var headRow = document.getElementById("matrix-head-row");
+      while (headRow.firstChild) headRow.removeChild(headRow.firstChild);
+      var corner = document.createElement("th");
+      corner.textContent = "\u65e5\u4ed8 \uff3c \u53f0\u756a\u53f7";
+      headRow.appendChild(corner);
+      units.forEach(function (u) {
+        var th = document.createElement("th");
+        th.textContent = u;
+        headRow.appendChild(th);
+      });
+      var thTotal = document.createElement("th");
+      thTotal.textContent = "\u65e5\u4ed8\u5408\u8a08";
+      thTotal.className = "total-col";
+      headRow.appendChild(thTotal);
+
+      // body rows (one per date)
+      var body = document.getElementById("matrix-body");
+      while (body.firstChild) body.removeChild(body.firstChild);
+      var bodyFrag = document.createDocumentFragment();
+      dates.forEach(function (dt, di) {
+        var tr = document.createElement("tr");
+        var tdDate = document.createElement("td");
+        tdDate.textContent = dt;
+        tr.appendChild(tdDate);
+        units.forEach(function (u, ui) {
+          var v = cells[ui][di];
+          var td = document.createElement("td");
+          if (v === null) {
+            td.textContent = "\u2014";
+            td.className = "cell-empty";
+          } else {
+            td.textContent = signed(v);
+            td.style.background = bg(v, maxAbsCell);
+          }
+          tr.appendChild(td);
+        });
+        var tdTotal = document.createElement("td");
+        tdTotal.textContent = signed(rowTotal[di]);
+        tdTotal.className = "total-col";
+        tdTotal.style.background = bg(rowTotal[di], maxAbsRowTotal);
+        tr.appendChild(tdTotal);
+        bodyFrag.appendChild(tr);
+      });
+      body.appendChild(bodyFrag);
+
+      // foot: 月合計
+      var footSum = document.getElementById("matrix-foot-sum");
+      while (footSum.firstChild) footSum.removeChild(footSum.firstChild);
+      var tdSumLabel = document.createElement("td");
+      tdSumLabel.textContent = "\u6708\u5408\u8a08";
+      footSum.appendChild(tdSumLabel);
+      colTotal.forEach(function (c) {
+        var td = document.createElement("td");
+        td.textContent = c.sum === null ? "\u2014" : signed(c.sum);
+        td.style.background = bg(c.sum, maxAbsColTotal);
+        footSum.appendChild(td);
+      });
+      var tdGrand = document.createElement("td");
+      tdGrand.textContent = grandTotal === null ? "\u2014" : signed(grandTotal);
+      tdGrand.className = "total-col";
+      footSum.appendChild(tdGrand);
+
+      // foot: プラス日数
+      var footPlus = document.getElementById("matrix-foot-plus");
+      while (footPlus.firstChild) footPlus.removeChild(footPlus.firstChild);
+      var tdPlusLabel = document.createElement("td");
+      tdPlusLabel.textContent = "\u30d7\u30e9\u30b9\u65e5\u6570";
+      footPlus.appendChild(tdPlusLabel);
+      colTotal.forEach(function (c) {
+        var td = document.createElement("td");
+        td.textContent = c.withData ? (c.plus + " / " + c.withData) : "\u2014";
+        footPlus.appendChild(td);
+      });
+      var tdPlusTotal = document.createElement("td");
+      tdPlusTotal.textContent = overallPlusDays + " / " + overallDaysWithData;
+      tdPlusTotal.className = "total-col";
+      footPlus.appendChild(tdPlusTotal);
+
+    document.getElementById("matrix-count").textContent =
+      "\u53f0\u6570 " + units.length + " \u53f0\uff0f" + dates.length + "\u65e5\u5206";
+  }
+
+  kishuSelect.addEventListener("change", function () { renderMatrix(); renderWinrate(); });
+
+  // ---------- マトリクス／勝率 専用の期間指定 ----------
+  var matrixDaysSelect = document.getElementById("matrix-days");
+  var matrixFromInput = document.getElementById("matrix-from");
+  var matrixToInput = document.getElementById("matrix-to");
+  var matrixRangeReset = document.getElementById("matrix-range-reset");
+  var matrixRangeNote = document.getElementById("matrix-range-note");
+
+  // 台別詳細データがある日だけが対象。カレンダーの選択範囲もこれに合わせる。
+  function fullDataDates() {
+    return sortedDates.filter(function (d) { return !!DATA.days[d].rows; });
+  }
+
+  function syncMatrixRangeInputs() {
+    var fd = fullDataDates();
+    var lo = fd.length ? fd[0] : "";
+    var hi = fd.length ? fd[fd.length - 1] : "";
+    [matrixFromInput, matrixToInput].forEach(function (el) {
+      el.min = lo; el.max = hi;
+    });
+    matrixFromInput.value = matrixRangeFrom || "";
+    matrixToInput.value = matrixRangeTo || "";
+    var dts = matrixM.dates;
+    matrixRangeNote.textContent = dts.length
+      ? (dts.length + "\u65e5\u5206\u3092\u96c6\u8a08\u4e2d"
+         + (matrixRangeFrom || matrixRangeTo ? "" : "\uff08\u5168\u671f\u9593\uff09"))
+      : "\u5bfe\u8c61\u306e\u65e5\u304c\u3042\u308a\u307e\u305b\u3093";
+  }
+
+  // 期間を適用してマトリクスと勝率を作り直す
+  function applyMatrixRange(fromIso, toIso, daysKey) {
+    matrixRangeFrom = fromIso || null;
+    matrixRangeTo = toIso || null;
+    if (daysKey !== undefined) matrixDaysSelect.value = daysKey;
+    refreshMatrixSource();
+    refreshWinrateSource();
+    renderKishuSummary();
+    syncMatrixRangeInputs();
+  }
+
+  matrixDaysSelect.addEventListener("change", function () {
+    var key = matrixDaysSelect.value;
+    var fd = fullDataDates();
+    if (key === "all" || !fd.length) { applyMatrixRange(null, null); return; }
+    var n = parseInt(key, 10);
+    var to = fd[fd.length - 1];
+    // 「直近N日」はデータのある日を N 件さかのぼって決める（欠測日があっても件数が揃う）
+    var from = fd.length >= n ? fd[fd.length - n] : fd[0];
+    applyMatrixRange(from, to);
+  });
+
+  function onMatrixDateChange() {
+    var f = matrixFromInput.value || null;
+    var t = matrixToInput.value || null;
+    if (f && t && f > t) { var tmp = f; f = t; t = tmp; }   // 逆順に入力されたら入れ替える
+    applyMatrixRange(f, t, "");   // 手入力時は日数プリセットの選択を外す
+  }
+  matrixFromInput.addEventListener("change", onMatrixDateChange);
+  matrixToInput.addEventListener("change", onMatrixDateChange);
+  matrixRangeReset.addEventListener("click", function () { applyMatrixRange(null, null, "all"); });
+
+  // ---------- 台番号別 勝率 ----------
+  var winrateSelect = document.getElementById("winrate-kishu");
+  var winrateBody = document.getElementById("winrate-body");
+  var winrateCount = document.getElementById("winrate-count");
+  var winrateSortKey = "rate", winrateSortDir = -1;   // 既定は勝率の高い順
+
+  // 選択中の機種について、台番号ごとに稼働日数・勝ち日数・累計差枚を集計する
+  function computeWinrate(kishuName) {
+    var entry = matrixM.byKishu[kishuName];
+    if (!entry) return [];
+    return entry.units.map(function (unit, ui) {
+      var cells = entry.cells[ui];
+      var days = 0, wins = 0, losses = 0, total = 0;
+      cells.forEach(function (v) {
+        if (v === null || v === undefined) return;   // その日データ無し
+        days++;
+        total += v;
+        if (v > 0) wins++;
+        else if (v < 0) losses++;                    // 差枚0は勝ちにも負けにも数えない
+      });
+      return {
+        d: unit, days: days, wins: wins, losses: losses,
+        rate: days ? wins / days : null,
+        total: days ? total : null,
+        avg: days ? Math.round(total / days) : null
+      };
+    });
+  }
+
+  function renderWinrate() {
+    var name = winrateSelect.value;
+    var rows = computeWinrate(name);
+    var dts = matrixM.dates;
+    document.getElementById("winrate-range").textContent = dts.length
+      ? (dts[0] + " \u2192 " + dts[dts.length - 1] + "\uff08" + dts.length + "\u65e5\u5206\uff09")
+      : "\u30c7\u30fc\u30bf\u306a\u3057";
+
+    while (winrateBody.firstChild) winrateBody.removeChild(winrateBody.firstChild);
+
+    if (!rows.length) {
+      winrateCount.textContent = "\u8868\u793a\u3067\u304d\u308b\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093";
+      return;
+    }
+
+    var sorted = rows.slice().sort(function (a, b) {
+      var x = a[winrateSortKey], y = b[winrateSortKey];
+      if (x === null && y === null) return a.d - b.d;
+      if (x === null) return 1;      // 集計できない台は常に末尾へ
+      if (y === null) return -1;
+      if (x === y) return a.d - b.d;
+      return (x < y ? -1 : 1) * winrateSortDir;
+    });
+
+    var totalDays = 0, totalWins = 0, sumAll = 0;
+    rows.forEach(function (r) { totalDays += r.days; totalWins += r.wins; sumAll += (r.total || 0); });
+
+    var frag = document.createDocumentFragment();
+    sorted.forEach(function (r) {
+      var tr = document.createElement("tr");
+
+      var tdD = document.createElement("td");
+      tdD.className = "num"; tdD.style.textAlign = "left";
+      tdD.textContent = r.d;
+      tr.appendChild(tdD);
+
+      var tdDays = document.createElement("td");
+      tdDays.className = "num"; tdDays.textContent = r.days;
+      tr.appendChild(tdDays);
+
+      var tdWins = document.createElement("td");
+      tdWins.className = "num"; tdWins.textContent = r.wins;
+      tr.appendChild(tdWins);
+
+      var tdRate = document.createElement("td");
+      tdRate.className = "num";
+      if (r.rate === null) {
+        tdRate.textContent = "\u2014";
+        tdRate.className += " thin";
+      } else {
+        var wrap = document.createElement("div");
+        wrap.className = "rate-cell";
+        var txt = document.createElement("span");
+        txt.textContent = (r.rate * 100).toFixed(1) + "%";
+        var bar = document.createElement("span");
+        bar.className = "rate-bar";
+        var fill = document.createElement("span");
+        fill.style.width = Math.round(r.rate * 100) + "%";
+        bar.appendChild(fill);
+        wrap.appendChild(txt); wrap.appendChild(bar);
+        tdRate.appendChild(wrap);
+      }
+      tr.appendChild(tdRate);
+
+      var tdTotal = document.createElement("td");
+      tdTotal.className = "num " + signClass(r.total);
+      tdTotal.textContent = r.total === null ? "\u2014" : signed(r.total);
+      tr.appendChild(tdTotal);
+
+      var tdAvg = document.createElement("td");
+      tdAvg.className = "num " + signClass(r.avg);
+      tdAvg.textContent = r.avg === null ? "\u2014" : signed(r.avg);
+      tr.appendChild(tdAvg);
+
+      frag.appendChild(tr);
+    });
+    winrateBody.appendChild(frag);
+
+    winrateCount.textContent =
+      rows.length + "\u53f0\uff0f\u5168\u4f53\u306e\u52dd\u7387 "
+      + (totalDays ? (totalWins / totalDays * 100).toFixed(1) : "0.0") + "%"
+      + "\uff08" + totalWins + " / " + totalDays + "\u53f0\u65e5\uff09\uff0f\u7d2f\u8a08 " + signed(sumAll);
+  }
+
+  // 機種の選択肢はマトリクスと同じものを使う（同じ期間から作っているため）
+  function refreshWinrateSource() {
+    var prev = winrateSelect.value;
+    var names = Object.keys(matrixM.byKishu).sort(function (a, b) {
+      return matrixM.byKishu[b].units.length - matrixM.byKishu[a].units.length || a.localeCompare(b, "ja");
+    });
+    while (winrateSelect.firstChild) winrateSelect.removeChild(winrateSelect.firstChild);
+    names.forEach(function (n) {
+      var opt = document.createElement("option");
+      opt.value = n;
+      opt.textContent = n + "\uff08" + matrixM.byKishu[n].units.length + "\u53f0\uff09";
+      winrateSelect.appendChild(opt);
+    });
+    if (!names.length) { renderWinrate(); return; }
+    winrateSelect.value = names.indexOf(prev) !== -1 ? prev : names[0];
+    renderWinrate();
+  }
+
+  winrateSelect.addEventListener("change", renderWinrate);
+
+  // ---------- 機種別サマリー ----------
+  var kishuBody = document.getElementById("kishu-body");
+  var kishuCount = document.getElementById("kishu-count");
+  var kishuSortKey = "units", kishuSortDir = -1;   // 既定は台数の多い順
+
+  // マトリクスで選んだ期間について、機種ごとに平均G数・勝率・差枚を集計する。
+  // マトリクスの cells は差枚しか持たないので、ここは元データから直接数える。
+  function computeKishuSummary() {
+    var acc = {};
+    matrixM.dates.forEach(function (d) {
+      var rows = DATA.days[d] && DATA.days[d].rows;
+      if (!rows) return;
+      rows.forEach(function (r) {
+        var a = acc[r.k];
+        if (!a) {
+          a = acc[r.k] = { k: r.k, unitsSet: {}, unitDays: 0, wins: 0, losses: 0,
+                           total: 0, gSum: 0, gCount: 0 };
+        }
+        if (r.d !== null && r.d !== undefined) a.unitsSet[r.d] = true;
+        if (r.s !== null && r.s !== undefined) {
+          a.unitDays++;                 // 延べ台日（差枚が記録されている台×日）
+          a.total += r.s;
+          if (r.s > 0) a.wins++;
+          else if (r.s < 0) a.losses++; // 差枚0は勝ちにも負けにも数えない
+        }
+        if (r.g !== null && r.g !== undefined) { a.gSum += r.g; a.gCount++; }
+      });
+    });
+    return Object.keys(acc).map(function (name) {
+      var a = acc[name];
+      return {
+        k: name,
+        units: Object.keys(a.unitsSet).length,
+        unitDays: a.unitDays,
+        g: a.gCount ? Math.round(a.gSum / a.gCount) : null,
+        rate: a.unitDays ? a.wins / a.unitDays : null,
+        avg: a.unitDays ? Math.round(a.total / a.unitDays) : null,
+        total: a.unitDays ? a.total : null
+      };
+    });
+  }
+
+  function renderKishuSummary() {
+    var rows = computeKishuSummary();
+    var dts = matrixM.dates;
+    document.getElementById("kishu-range").textContent = dts.length
+      ? (dts[0] + " \u2192 " + dts[dts.length - 1] + "\uff08" + dts.length + "\u65e5\u5206\uff09")
+      : "\u30c7\u30fc\u30bf\u306a\u3057";
+
+    while (kishuBody.firstChild) kishuBody.removeChild(kishuBody.firstChild);
+    if (!rows.length) {
+      kishuCount.textContent = "\u8868\u793a\u3067\u304d\u308b\u30c7\u30fc\u30bf\u304c\u3042\u308a\u307e\u305b\u3093";
+      return;
+    }
+
+    var sorted = rows.slice().sort(function (a, b) {
+      var x = a[kishuSortKey], y = b[kishuSortKey];
+      if (kishuSortKey === "k") return a.k.localeCompare(b.k, "ja") * kishuSortDir;
+      if (x === null && y === null) return a.k.localeCompare(b.k, "ja");
+      if (x === null) return 1;      // 集計できない機種は常に末尾へ
+      if (y === null) return -1;
+      if (x === y) return a.k.localeCompare(b.k, "ja");
+      return (x < y ? -1 : 1) * kishuSortDir;
+    });
+
+    var frag = document.createDocumentFragment();
+    sorted.forEach(function (r) {
+      var tr = document.createElement("tr");
+
+      var tdK = document.createElement("td");
+      tdK.textContent = r.k;
+      tr.appendChild(tdK);
+
+      var tdU = document.createElement("td");
+      tdU.className = "num"; tdU.textContent = r.units;
+
+      var tdUD = document.createElement("td");
+      tdUD.className = "num thin"; tdUD.textContent = fmt.format(r.unitDays);
+
+      var tdG = document.createElement("td");
+      tdG.className = "num";
+      tdG.textContent = r.g === null ? "\u2014" : fmt.format(r.g);
+
+      var tdR = document.createElement("td");
+      tdR.className = "num";
+      if (r.rate === null) {
+        tdR.textContent = "\u2014"; tdR.className += " thin";
+      } else {
+        var wrap = document.createElement("div");
+        wrap.className = "rate-cell";
+        var txt = document.createElement("span");
+        txt.textContent = (r.rate * 100).toFixed(1) + "%";
+        var bar = document.createElement("span");
+        bar.className = "rate-bar";
+        var fill = document.createElement("span");
+        fill.style.width = Math.round(r.rate * 100) + "%";
+        bar.appendChild(fill);
+        wrap.appendChild(txt); wrap.appendChild(bar);
+        tdR.appendChild(wrap);
+      }
+      var tdA = document.createElement("td");
+      tdA.className = "num " + signClass(r.avg);
+      tdA.textContent = r.avg === null ? "\u2014" : signed(r.avg);
+
+      var tdT = document.createElement("td");
+      tdT.className = "num " + signClass(r.total);
+      tdT.textContent = r.total === null ? "\u2014" : signed(r.total);
+
+      // 見出しと同じ並び: 機種 / 勝率 / 平均G数 / 平均差枚 / 台数 / 延べ台日 / 累計差枚
+      tr.appendChild(tdR);
+      tr.appendChild(tdG);
+      tr.appendChild(tdA);
+      tr.appendChild(tdU);
+      tr.appendChild(tdUD);
+      tr.appendChild(tdT);
+
+      frag.appendChild(tr);
+    });
+    kishuBody.appendChild(frag);
+
+    var allUnitDays = 0, allWins = 0;
+    rows.forEach(function (r) {
+      allUnitDays += r.unitDays;
+      if (r.rate !== null) allWins += Math.round(r.rate * r.unitDays);
+    });
+    kishuCount.textContent =
+      rows.length + "\u6a5f\u7a2e\uff0f\u5ef6\u3079 " + fmt.format(allUnitDays) + "\u53f0\u65e5"
+      + "\uff0f\u5168\u4f53\u306e\u52dd\u7387 "
+      + (allUnitDays ? (allWins / allUnitDays * 100).toFixed(1) : "0.0") + "%";
+  }
+
+  document.querySelectorAll("#kishu-table thead th").forEach(function (th) {
+    function activate() {
+      var key = th.getAttribute("data-kkey");
+      if (kishuSortKey === key) kishuSortDir *= -1;
+      else { kishuSortKey = key; kishuSortDir = (key === "k") ? 1 : -1; }
+      document.querySelectorAll("#kishu-table thead th .arrow").forEach(function (a) { a.textContent = ""; });
+      th.querySelector(".arrow").textContent = kishuSortDir === 1 ? "\u2191" : "\u2193";
+      renderKishuSummary();
+    }
+    th.addEventListener("click", activate);
+    th.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); }
+    });
+  });
+  document.querySelector('#kishu-table th[data-kkey="units"] .arrow').textContent = "\u2193";
+
+  document.querySelectorAll("#winrate-table thead th").forEach(function (th) {
+    function activate() {
+      var key = th.getAttribute("data-wkey");
+      if (winrateSortKey === key) winrateSortDir *= -1;
+      else { winrateSortKey = key; winrateSortDir = (key === "d") ? 1 : -1; }
+      document.querySelectorAll("#winrate-table thead th .arrow").forEach(function (a) { a.textContent = ""; });
+      th.querySelector(".arrow").textContent = winrateSortDir === 1 ? "\u2191" : "\u2193";
+      renderWinrate();
+    }
+    th.addEventListener("click", activate);
+    th.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); }
+    });
+  });
+  document.querySelector('#winrate-table th[data-wkey="rate"] .arrow').textContent = "\u2193";
+
+  // 初期表示（マトリクス→勝率の順に作る。勝率はマトリクスの集計結果を使うため）
+  refreshMatrixSource();
+  refreshWinrateSource();
+  renderKishuSummary();
+  syncMatrixRangeInputs();
+
+  // ---------- Global period-range filter (scopes trend / patterns / overlay) ----------
+  var rangePresetButtons = document.querySelectorAll("#range-preset button");
+  var rangeFromInput = document.getElementById("range-from");
+  var rangeToInput = document.getElementById("range-to");
+  var rangeNote = document.getElementById("range-filter-note");
+
+  function setActivePreset(key) {
+    rangePresetButtons.forEach(function (b) {
+      var on = b.getAttribute("data-days") === key;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+  }
+
+  function applyRange(fromIso, toIso, presetKey) {
+    currentRangeFrom = fromIso;
+    currentRangeTo = toIso;
+    rangeFromInput.value = fromIso || "";
+    rangeToInput.value = toIso || "";
+    setActivePreset(presetKey || "__custom__");
+    trendFiltered = trendAll.filter(function (r) {
+      if (fromIso && r.date < fromIso) return false;
+      if (toIso && r.date > toIso) return false;
+      return true;
+    });
+    if (trendFiltered.length === 0) trendFiltered = trendAll.slice(-1);
+    // 上限も下限も無いときは「全期間」と表示する（初期表示と同じ書き方に揃える）
+    rangeNote.textContent = !trendFiltered.length ? "\u2014"
+      : (!fromIso && !toIso)
+        ? (trendFiltered.length + "\u65e5\u5206\uff08\u5168\u671f\u9593\uff09\u3092\u8868\u793a\u4e2d")
+        : (trendFiltered[0].date + " \u301c " + trendFiltered[trendFiltered.length - 1].date + "\uff08" + trendFiltered.length + "\u65e5\u5206\uff09\u3092\u8868\u793a\u4e2d");
+    renderChart(currentMetric);
+    renderPatternsCharts();
+    refreshOverlaySource();
+    // マトリクスと勝率は専用の期間指定を持つので、ここでは触らない
+  }
+
+  rangePresetButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var key = btn.getAttribute("data-days");
+      if (key === "all") { applyRange(null, null, "all"); return; }
+      var n = parseInt(key, 10);
+      var to = lastDate;
+      var from = addDaysIso(to, -(n - 1));
+      applyRange(from, to, key);
+    });
+  });
+  function onCustomRangeChange() {
+    var f = rangeFromInput.value, t = rangeToInput.value;
+    if (f && t) applyRange(f, t, null);
+  }
+  rangeFromInput.addEventListener("change", onCustomRangeChange);
+  rangeToInput.addEventListener("change", onCustomRangeChange);
+
+  // initial UI state matches the already-rendered "全期間" (trendFiltered === trendAll)
+  setActivePreset("all");
+  rangeNote.textContent = trendFiltered.length + "\u65e5\u5206\uff08\u5168\u671f\u9593\uff09\u3092\u8868\u793a\u4e2d";
+
+  // ---------- Data table ----------
+  var tbody = document.getElementById("table-body");
+  var searchInput = document.getElementById("search");
+  var kishuFilter = document.getElementById("kishu-filter");
+  var daibanMin = document.getElementById("daiban-min");
+  var daibanMax = document.getElementById("daiban-max");
+  var clearFiltersBtn = document.getElementById("clear-filters");
+  var resultCount = document.getElementById("result-count");
+  var tableDaySelect = document.getElementById("table-day-select");
+  var sortKey = "d", sortDir = 1;
+  var rows = [];
+
+  var tableDates = [];
+  // 対象日の選択肢を作り直す（店舗切替とデータ更新のたびに呼ぶ）
+  function refreshTableDays() {
+    tableDates = sortedDates.filter(function (d) { return !!DATA.days[d].rows; }).slice().reverse();
+    while (tableDaySelect.firstChild) tableDaySelect.removeChild(tableDaySelect.firstChild);
+    tableDates.forEach(function (d) {
+      var opt = document.createElement("option");
+      opt.value = d;
+      opt.textContent = d + "\uff08" + DATA.days[d].weekday + "\uff09";
+      tableDaySelect.appendChild(opt);
+    });
+  }
+  refreshTableDays();
+
+  function populateKishuFilterOptions() {
+    while (kishuFilter.firstChild) kishuFilter.removeChild(kishuFilter.firstChild);
+    var kishuCounts = {};
+    rows.forEach(function (r) { kishuCounts[r.k] = (kishuCounts[r.k] || 0) + 1; });
+    var names = Object.keys(kishuCounts).sort(function (a, b) {
+      return kishuCounts[b] - kishuCounts[a] || a.localeCompare(b, "ja");
+    });
+    var optAll = document.createElement("option");
+    optAll.value = ""; optAll.textContent = "\u3059\u3079\u3066\u306e\u6a5f\u7a2e\uff08" + rows.length + "\u53f0\uff09";
+    kishuFilter.appendChild(optAll);
+    names.forEach(function (name) {
+      var opt = document.createElement("option");
+      opt.value = name; opt.textContent = name + "\uff08" + kishuCounts[name] + "\u53f0\uff09";
+      kishuFilter.appendChild(opt);
+    });
+  }
+
+  function loadTableDay(dateStr) {
+    rows = (DATA.days[dateStr] && DATA.days[dateStr].rows) ? DATA.days[dateStr].rows.slice() : [];
+    document.getElementById("table-date").textContent = dateStr || "\u2014";
+    populateKishuFilterOptions();
+    renderTable();
+  }
+
+  function matches(row, q) {
+    if (!q) return true;
+    q = q.toLowerCase();
+    if (row.k.toLowerCase().indexOf(q) !== -1) return true;
+    if (String(row.d).indexOf(q) !== -1) return true;
+    return false;
+  }
+
+  function passesFilters(row) {
+    var q = searchInput.value.trim();
+    if (!matches(row, q)) return false;
+    var kSel = kishuFilter.value;
+    if (kSel && row.k !== kSel) return false;
+    var minV = daibanMin.value === "" ? null : parseInt(daibanMin.value, 10);
+    var maxV = daibanMax.value === "" ? null : parseInt(daibanMax.value, 10);
+    if (minV !== null && row.d < minV) return false;
+    if (maxV !== null && row.d > maxV) return false;
+    return true;
+  }
+
+  function renderTable() {
+    var filtered = rows.filter(passesFilters);
+    filtered.sort(function (a, b) {
+      var av = a[sortKey], bv = b[sortKey];
+      if (av === null) av = sortKey === "k" ? "" : -Infinity;
+      if (bv === null) bv = sortKey === "k" ? "" : -Infinity;
+      if (av < bv) return -1 * sortDir;
+      if (av > bv) return 1 * sortDir;
+      return 0;
+    });
+    while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
+    var frag = document.createDocumentFragment();
+    filtered.forEach(function (r) {
+      var tr = document.createElement("tr");
+      var tdD = document.createElement("td"); tdD.textContent = r.d;
+      var tdK = document.createElement("td"); tdK.textContent = r.k;
+      var tdS = document.createElement("td"); tdS.textContent = signed(r.s); tdS.className = signClass(r.s);
+      var tdG = document.createElement("td"); tdG.textContent = r.g === null ? "\u2014" : fmt.format(r.g);
+      var tdP = document.createElement("td"); tdP.textContent = r.p === null ? "\u2014" : fmt1.format(r.p) + "%";
+      tr.appendChild(tdD); tr.appendChild(tdK); tr.appendChild(tdS); tr.appendChild(tdG); tr.appendChild(tdP);
+      frag.appendChild(tr);
+    });
+    tbody.appendChild(frag);
+    resultCount.textContent = rows.length + "\u4ef6\u4e2d " + filtered.length + "\u4ef6\u8868\u793a";
+  }
+
+  document.querySelectorAll("#data-table thead th").forEach(function (th) {
+    function activate() {
+      var key = th.getAttribute("data-key");
+      if (sortKey === key) { sortDir *= -1; } else { sortKey = key; sortDir = key === "k" ? 1 : -1; }
+      document.querySelectorAll("#data-table thead th .arrow").forEach(function (a) { a.textContent = ""; });
+      th.querySelector(".arrow").textContent = sortDir === 1 ? "\u2191" : "\u2193";
+      renderTable();
+    }
+    th.addEventListener("click", activate);
+    th.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); } });
+  });
+  searchInput.addEventListener("input", renderTable);
+  kishuFilter.addEventListener("change", renderTable);
+  daibanMin.addEventListener("input", renderTable);
+  daibanMax.addEventListener("input", renderTable);
+  clearFiltersBtn.addEventListener("click", function () {
+    searchInput.value = ""; kishuFilter.value = ""; daibanMin.value = ""; daibanMax.value = "";
+    renderTable();
+  });
+  tableDaySelect.addEventListener("change", function () { loadTableDay(tableDaySelect.value); });
+
+  // default sort indicator
+  document.querySelector('#data-table th[data-key="d"] .arrow').textContent = "\u2193";
+
+  // 全台データの表示を、現在選択中の店舗の最新日に合わせる
+  function resetTableSection() {
+    refreshTableDays();
+    if (tableDates.length) {
+      tableDaySelect.value = tableDates[0];
+      loadTableDay(tableDates[0]);
+    } else {
+      rows = [];
+      document.getElementById("table-date").textContent = "\u2014";
+      populateKishuFilterOptions();
+      renderTable();
+    }
+  }
+  resetTableSection();
+
+  // ---------- 店舗切替 ----------
+  // 店舗が1つしか無いときはセレクタ自体を出さない
+  var storePicker = document.getElementById("store-picker");
+  var storeSelect = document.getElementById("store-select");
+  if (storeIds.length > 1) {
+    storeIds.forEach(function (sid) {
+      var opt = document.createElement("option");
+      opt.value = sid;
+      opt.textContent = ROOT.stores[sid].name;
+      storeSelect.appendChild(opt);
+    });
+    storeSelect.value = currentStoreId;
+    storePicker.hidden = false;
+
+    storeSelect.addEventListener("change", function () {
+      loadStoreData(storeSelect.value);
+      // 期間指定は店舗ごとにデータ範囲が違うので「全期間」に戻す
+      rangeFromInput.value = "";
+      rangeToInput.value = "";
+      applyRange(null, null, "all");
+      // マトリクス／勝率の専用期間も同様に戻す（別店舗に存在しない日付が残るのを防ぐ）
+      applyMatrixRange(null, null, "all");
+      // 絞り込み条件も持ち越さない（別店舗に無い機種が選ばれたままになるのを防ぐ）
+      searchInput.value = ""; daibanMin.value = ""; daibanMax.value = "";
+      resetTableSection();
+    });
+  }
+};
+</script>
+
+<script>
+/* ---- データローダ: data/ 配下の月別JSONを読み込んでダッシュボードを起動する ---- */
+(function () {
+  "use strict";
+  var BASE = "data/";
+
+  function panel(title, body) {
+    document.body.innerHTML =
+      '<div style="max-width:680px;margin:80px auto;padding:0 24px;' +
+      'font-family:system-ui,sans-serif;line-height:1.9;color:#3a3733">' +
+      '<h1 style="font-size:20px">' + title + '</h1><p>' + body + '</p></div>';
+  }
+
+  function getJson(url) {
+    return fetch(url, { cache: "no-cache" }).then(function (r) {
+      if (!r.ok) throw new Error(url + " : HTTP " + r.status);
+      return r.json();
+    });
+  }
+
+  getJson(BASE + "index.json").then(function (idx) {
+    var sids = Object.keys(idx.stores || {});
+    return Promise.all(sids.map(function (sid) {
+      var meta = idx.stores[sid];
+      var months = meta.months || [];
+      return Promise.all(months.map(function (m) {
+        return getJson(BASE + sid + "/" + m + ".json");
+      })).then(function (parts) {
+        var days = {};
+        parts.forEach(function (part) {
+          Object.keys(part).forEach(function (date) {
+            var v = part[date];
+            var src = v.rows || [];
+            var rows = new Array(src.length);
+            for (var i = 0; i < src.length; i++) {
+              var r = src[i];
+              rows[i] = { k: r[0], d: r[1], s: r[2], g: r[3], p: r[4] };
+            }
+            days[date] = { weekday: v.w, rows: rows };
+          });
+        });
+        return { sid: sid, store: { name: meta.name, tagUrl: meta.tagUrl, order: meta.order, days: days } };
+      });
+    })).then(function (list) {
+      var stores = {};
+      list.forEach(function (x) { stores[x.sid] = x.store; });
+      window.__PACHINKO_DATA__ = {
+        schemaVersion: 2,
+        sourceName: idx.sourceName,
+        lastUpdated: idx.lastUpdated,
+        kishuNames: idx.kishuNames,
+        stores: stores
+      };
+      window.__BOOT__();
+    });
+  }).catch(function (e) {
+    if (location.protocol === "file:") {
+      panel("ローカルファイル直開きでは表示できません",
+        "このページは data/ フォルダのJSONを読み込むため、file:// では開けません。<br><br>" +
+        "・公開した GitHub Pages のURLから開く<br>" +
+        "・または docs フォルダで <code>python -m http.server 8000</code> を実行して " +
+        "<code>http://localhost:8000/</code> を開く");
+    } else {
+      panel("データを読み込めませんでした",
+        "scrape.py を実行して data/ を生成してください。<br><br><code>" +
+        String(e && e.message ? e.message : e) + "</code>");
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
