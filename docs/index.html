@@ -143,6 +143,7 @@
   .store-picker[hidden] { display: none; }
   .store-picker label {
     font-size: 12px; color: var(--ink-muted); letter-spacing: .04em;
+    flex: 0 0 auto; white-space: nowrap;
   }
   .store-picker select { min-width: 200px; }
 
@@ -153,8 +154,10 @@
   }
   .range-custom-fields label {
     display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-muted);
-    font-family: "Roboto Mono", monospace;
+    font-family: "Roboto Mono", monospace; flex-wrap: wrap;
   }
+  /* flex アイテムとして潰れて1文字ずつ折り返されるのを防ぐ */
+  .range-custom-fields .fld-label { flex: 0 0 auto; white-space: nowrap; }
   .range-filter-bar input[type="date"] {
     font: inherit; font-family: "Roboto Mono", monospace; font-size: 12.5px;
     background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
@@ -422,6 +425,62 @@
     .kpi-row { grid-template-columns: repeat(2, 1fr); }
     .search-box input { width: 180px; }
   }
+
+  /* --- スマホ幅（〜560px）--- */
+  @media (max-width: 560px) {
+    .wrap { padding: 0 14px 44px; }
+    header.top .inner { padding: 10px 14px; gap: 8px 12px; }
+    .brand h1 { font-size: 16px; }
+
+    .hero-meta { padding: 18px 0 10px; margin-bottom: 20px; }
+    /* 右寄せのままだと折り返したとき本文と揃わず読みにくい */
+    .hero-meta .updated { text-align: left; }
+    .store-picker { width: 100%; }
+    .store-picker select { min-width: 0; width: 100%; }
+
+    section { margin: 30px 0; }
+    section > p.desc { font-size: 12.5px; margin-bottom: 12px; }
+
+    .kpi { padding: 12px 12px 11px; }
+    .kpi .label { font-size: 11.5px; margin-bottom: 6px; }
+    .kpi .value { font-size: 22px; }
+
+    .chart-card { padding: 12px 12px 6px; }
+    /* 横幅が狭いぶん高さも詰めて、1画面に入る情報量を確保する */
+    svg.trend { height: 240px; }
+    svg.bar-chart { height: 190px; }
+    svg.overlay-chart { height: 260px; }
+
+    /* iOS Safari は 16px 未満の入力欄をタップすると自動でズームするので、
+       それを避けるために入力系だけ 16px にそろえる。 */
+    .search-box input,
+    select.kishu-select,
+    .range-filter-bar input[type="date"],
+    .sub-range-bar input[type="date"],
+    .range-inputs input { font-size: 16px; }
+
+    .search-box { flex: 1 1 100%; }
+    .search-box input { width: 100%; }
+    select.kishu-select { width: 100%; max-width: none; }
+    .filter-group, .table-toolbar, .matrix-toolbar { gap: 10px 14px; }
+    .field { flex: 1 1 100%; }
+    .range-inputs input { width: 100%; }
+    /* margin-left:auto のままだと折り返し後に右端へ飛んで浮くので左に戻す */
+    .range-filter-note, .sub-range-note { margin-left: 0; }
+
+    /* タップしやすい高さを確保する */
+    .segmented button { padding: 9px 12px; }
+    .mini-btn { padding: 9px 12px; }
+    nav.jump a { padding-bottom: 4px; }
+
+    /* 画面の高さに対して固定 640px は縦を占有しすぎる */
+    .table-scroll, .matrix-scroll { max-height: 68vh; }
+    table.data thead th { padding: 9px 9px; }
+    table.data tbody td { padding: 8px 9px; }
+    table.matrix th, table.matrix td { padding: 6px 8px; }
+    .matrix-legend { gap: 8px; }
+    .matrix-legend .ramp { width: 84px; }
+  }
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; }
   }
@@ -469,7 +528,7 @@
       <button data-days="all" role="tab" class="active" aria-selected="true">全期間</button>
     </div>
     <div class="range-custom-fields">
-      <label>期間指定 <input type="date" id="range-from"> 〜 <input type="date" id="range-to"></label>
+      <label><span class="fld-label">期間指定</span> <input type="date" id="range-from"> <span class="fld-label">〜</span> <input type="date" id="range-to"></label>
     </div>
     <div class="range-filter-note" id="range-filter-note">-</div>
   </section>
@@ -912,8 +971,28 @@ window.__BOOT__ = function () {
 
   function ns(tag) { return document.createElementNS("http://www.w3.org/2000/svg", tag); }
 
+  /* グラフは preserveAspectRatio="none" で描いているので、viewBox の幅と実際の
+     表示幅がズレると、その比率のぶんだけ中身が横に伸縮する。1000幅のviewBoxを
+     スマホの約340pxに詰め込むと目盛りの文字が1/3に潰れて読めなくなるため、
+     描画のたびに viewBox を実ピクセル寸法へ合わせて等倍にする。 */
+  function fitSvgBox(el, fallbackW, fallbackH) {
+    var r = el.getBoundingClientRect();
+    var w = Math.round(r.width) || fallbackW;
+    var h = Math.round(r.height) || fallbackH;
+    w = Math.max(240, w);
+    h = Math.max(120, h);
+    el.setAttribute("viewBox", "0 0 " + w + " " + h);
+    return { w: w, h: h };
+  }
+
   function renderChart(metric) {
     currentMetric = metric;
+    // 実表示サイズに合わせて座標系を組み直す（狭い画面ではY軸の余白も詰める）
+    var box = fitSvgBox(svg, 1000, 300);
+    W = box.w; H = box.h;
+    PAD_L = W < 480 ? 38 : 46;
+    plotW = W - PAD_L - PAD_R;
+    plotH = H - PAD_T - PAD_B;
     document.getElementById("trend-range").textContent = trendFiltered.length ?
       (trendFiltered[0].date + " \u2192 " + trendFiltered[trendFiltered.length - 1].date + "\uff08" + trendFiltered.length + "\u65e5\u5206\uff09") : "\u2014";
     var meta = METRIC_META[metric];
@@ -1132,7 +1211,9 @@ window.__BOOT__ = function () {
   }
 
   function renderAvgBarChart(svgEl, categories, buckets, labelFn) {
-    var W2 = 500, H2 = 220, PL = 40, PR = 8, PT = 10, PB = 26;
+    var box = fitSvgBox(svgEl, 500, 220);
+    var W2 = box.w, H2 = box.h;
+    var PL = W2 < 420 ? 34 : 40, PR = 8, PT = 10, PB = 26;
     var pw = W2 - PL - PR, ph = H2 - PT - PB;
     var n = categories.length;
     var slot = pw / n;
@@ -1326,7 +1407,9 @@ window.__BOOT__ = function () {
   }
 
   function renderOverlayChart() {
-    var W3 = 1000, H3 = 320, PL = 46, PR = 14, PT = 14, PB = 26;
+    var box = fitSvgBox(overlaySvg, 1000, 320);
+    var W3 = box.w, H3 = box.h;
+    var PL = W3 < 480 ? 38 : 46, PR = 14, PT = 14, PB = 26;
     var pw = W3 - PL - PR, ph = H3 - PT - PB;
     var visibleMonths = monthsPresent.filter(function (mo) { return activeMonths[mo]; });
 
@@ -2208,6 +2291,22 @@ window.__BOOT__ = function () {
     }
   }
   resetTableSection();
+
+  // ---------- 画面サイズの変化 ----------
+  // グラフは実表示ピクセルに合わせて座標系を作り直しているので、
+  // 端末の回転やウィンドウ幅の変更があったら描き直す。
+  var resizeTimer = null;
+  var lastChartWidth = window.innerWidth;
+  window.addEventListener("resize", function () {
+    if (window.innerWidth === lastChartWidth) return;  // iOSのアドレスバー伸縮での再描画を避ける
+    lastChartWidth = window.innerWidth;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      renderChart(currentMetric);
+      renderPatternsCharts();
+      renderOverlayChart();
+    }, 180);
+  });
 
   // ---------- 店舗切替 ----------
   // 店舗が1つしか無いときはセレクタ自体を出さない
