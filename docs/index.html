@@ -362,6 +362,13 @@
     background: var(--neg-wash); overflow: hidden;
   }
   .rate-bar span { display: block; height: 100%; background: var(--pos); border-radius: 3px; }
+  /* 勝率セルは「数値＋固定幅バー」で130px前後を必要とする。テーブルがそれより
+     狭い幅をこの列に割り当てると、中身がセルからあふれ、右寄せなので左隣の列
+     （勝ち日数など）に重なって数字が読めなくなる。テーブルは横スクロールできる
+     ので、列自体に下限幅を与えて重なりを防ぐ。 */
+  #winrate-table th:nth-child(4), #winrate-table td:nth-child(4),
+  #kishu-table th:nth-child(2), #kishu-table td:nth-child(2) { min-width: 132px; }
+  #winrate-table td:nth-child(4), #kishu-table td:nth-child(2) { overflow: hidden; }
   .thin { color: var(--ink-muted); }
   .matrix-card {
     background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
@@ -477,6 +484,11 @@
     .table-scroll, .matrix-scroll { max-height: 68vh; }
     table.data thead th { padding: 9px 9px; }
     table.data tbody td { padding: 8px 9px; }
+    /* 狭い画面ではバーを詰めて、勝率列が隣に食い込まない幅に収める */
+    .rate-cell { gap: 6px; }
+    .rate-bar { flex: 0 1 40px; }
+    #winrate-table th:nth-child(4), #winrate-table td:nth-child(4),
+    #kishu-table th:nth-child(2), #kishu-table td:nth-child(2) { min-width: 112px; }
     table.matrix th, table.matrix td { padding: 6px 8px; }
     .matrix-legend { gap: 8px; }
     .matrix-legend .ramp { width: 84px; }
